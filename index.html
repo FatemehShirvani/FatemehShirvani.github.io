@@ -139,6 +139,8 @@
     font-family:var(--mono); font-size:11px; color:var(--signal);
     text-align:center; padding:10px;
   }
+  .thumb.media-thumb{padding:0; overflow:hidden; background:#05070a;}
+  .thumb.media-thumb video{width:100%; height:100%; object-fit:cover; display:block;}
   .project h3{margin:0 0 8px; font-size:17px;}
   .project h3 .date{
     font-family:var(--mono); font-weight:400; font-size:12px;
@@ -236,17 +238,21 @@
       <div class="projects">
 
         <div class="project">
-          <div class="thumb">[ GIF/render placeholder ]</div>
+          <a class="thumb media-thumb" href="assets/soft-shadows/demo.html" aria-label="Open the Variance Soft Shadow Mapping demo">
+            <video autoplay muted loop playsinline preload="metadata">
+              <source src="assets/soft-shadows/soft-shadow-loop-card.mp4" type="video/mp4">
+            </video>
+          </a>
           <div>
-            <h3>Cornell Box Renderer <span class="date">Image Synthesis coursework</span></h3>
+            <h3>Variance Soft Shadow Mapping <span class="date">Image Synthesis coursework</span></h3>
             <p>
-              A dual rasterization / ray-tracing renderer in WebGPU. Möller–Trumbore intersection,
-              Lambert shading, shadow rays, and multiple animated colored lights — built and debugged
-              from scratch, shader compilation errors and shadow acne included.
+              A single-file WebGPU application comparing hard shadows, PCF, PCSS, VSM,
+              SAVSM, and VSSM variants under the same scene. The project focuses on
+              real-time soft shadows, light leaking, contact-shadow artifacts, and visual debugging.
             </p>
-            <div class="tags"><span>WebGPU</span><span>WGSL</span><span>Ray Tracing</span></div>
+            <div class="tags"><span>WebGPU</span><span>WGSL</span><span>Soft Shadows</span><span>VSSM</span></div>
             <div class="links">
-              <a href="#">Code</a><a href="#">Write-up</a>
+              <a href="assets/soft-shadows/demo.html">Demo</a><a href="assets/soft-shadows/soft-shadow-report.pdf">Report</a>
             </div>
           </div>
         </div>
