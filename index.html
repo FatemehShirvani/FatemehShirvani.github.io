@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fatemeh — Graphics &amp; Interaction</title>
+<style>
+  :root{
+    --paper:#F1F1EC;
+    --ink:#14181A;
+    --ink-soft:#4A5052;
+    --line:#D7D7CD;
+    --signal:#1F7A5C;
+    --signal-soft:#E4EFE9;
+    --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--signal); outline-offset:3px;}
+
+  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- nav ---------- */
+  header.site{
+    position:sticky; top:0; z-index:10;
+    background:color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .navrow{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 0;
+  }
+  .navrow .name{
+    font-family:var(--mono); font-size:14px; letter-spacing:0.02em;
+    text-decoration:none;
+  }
+  .navrow nav a{
+    font-family:var(--mono); font-size:13px; text-decoration:none;
+    color:var(--ink-soft); margin-left:22px;
+  }
+  .navrow nav a:hover{color:var(--ink);}
+
+  /* ---------- hero ---------- */
+  .hero{
+    padding:96px 0 72px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero .grid-bg{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:42px 42px;
+    mask-image:radial-gradient(ellipse 70% 60% at 70% 20%, black, transparent);
+    opacity:0.55;
+    pointer-events:none;
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:13px; color:var(--signal);
+    text-transform:uppercase; letter-spacing:0.08em; margin:0 0 18px;
+    position:relative;
+  }
+  h1.hero-title{
+    font-size:clamp(34px, 5vw, 54px);
+    line-height:1.08;
+    margin:0 0 22px;
+    max-width:14ch;
+    font-weight:650;
+    letter-spacing:-0.01em;
+    position:relative;
+  }
+  .hero p.lede{
+    max-width:56ch;
+    font-size:17px;
+    color:var(--ink-soft);
+    margin:0 0 30px;
+    position:relative;
+  }
+  .hero-links{position:relative; display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    font-family:var(--mono); font-size:13px;
+    padding:10px 16px;
+    border:1px solid var(--ink);
+    text-decoration:none;
+    display:inline-block;
+  }
+  .btn.primary{background:var(--ink); color:var(--paper);}
+  .btn.primary:hover{background:var(--signal); border-color:var(--signal);}
+  .btn.ghost:hover{background:var(--ink); color:var(--paper);}
+
+  /* ---------- section labels ---------- */
+  .section{padding:64px 0;}
+  .section + .section{border-top:1px solid var(--line);}
+  .section-head{
+    display:flex; align-items:baseline; justify-content:space-between;
+    margin-bottom:34px; gap:16px; flex-wrap:wrap;
+  }
+  .section-head h2{
+    font-size:22px; margin:0; font-weight:650;
+  }
+  .section-head .tag{
+    font-family:var(--mono); font-size:12px; color:var(--ink-soft);
+  }
+
+  /* ---------- skills ---------- */
+  .skills{display:flex; flex-wrap:wrap; gap:8px;}
+  .skills span{
+    font-family:var(--mono); font-size:12.5px;
+    border:1px solid var(--line);
+    padding:5px 10px;
+    color:var(--ink-soft);
+  }
+
+  /* ---------- projects ---------- */
+  .projects{display:grid; grid-template-columns:1fr; gap:0;}
+  .project{
+    display:grid; grid-template-columns:220px 1fr; gap:26px;
+    padding:26px 0; border-top:1px solid var(--line);
+    align-items:start;
+  }
+  .project:first-child{border-top:none;}
+  .thumb{
+    aspect-ratio:4/3; background:var(--signal-soft);
+    border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--mono); font-size:11px; color:var(--signal);
+    text-align:center; padding:10px;
+  }
+  .project h3{margin:0 0 8px; font-size:17px;}
+  .project h3 .date{
+    font-family:var(--mono); font-weight:400; font-size:12px;
+    color:var(--ink-soft); margin-left:10px;
+  }
+  .project p{margin:0 0 10px; color:var(--ink-soft); font-size:14.5px; max-width:60ch;}
+  .project .tags{display:flex; flex-wrap:wrap; gap:6px;}
+  .project .tags span{
+    font-family:var(--mono); font-size:11px; color:var(--signal);
+    background:var(--signal-soft); padding:3px 8px;
+  }
+  .project .links a{
+    font-family:var(--mono); font-size:12px; text-decoration:underline;
+    margin-right:14px; color:var(--ink-soft);
+  }
+  .project .links a:hover{color:var(--ink);}
+
+  @media (max-width:640px){
+    .project{grid-template-columns:1fr;}
+    .thumb{aspect-ratio:16/9;}
+  }
+
+  /* ---------- experience ---------- */
+  .xp-item{
+    display:grid; grid-template-columns:1fr auto; gap:10px;
+    padding:14px 0; border-top:1px solid var(--line);
+  }
+  .xp-item:first-child{border-top:none;}
+  .xp-item .role{font-weight:600; font-size:15px;}
+  .xp-item .org{color:var(--ink-soft); font-size:14px;}
+  .xp-item .when{font-family:var(--mono); font-size:12px; color:var(--ink-soft); white-space:nowrap;}
+
+  /* ---------- contact / footer ---------- */
+  footer{padding:56px 0 80px;}
+  .contact-row{display:flex; flex-wrap:wrap; gap:22px; font-family:var(--mono); font-size:14px;}
+  .contact-row a{text-decoration:underline;}
+  .fine{margin-top:40px; font-size:12px; color:var(--ink-soft); font-family:var(--mono);}
+
+  .placeholder{color:var(--signal); font-style:italic;}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap navrow">
+    <a class="name" href="#top">FATEMEH&nbsp;/&nbsp;PORTFOLIO</a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="grid-bg" aria-hidden="true"></div>
+    <div class="wrap">
+      <p class="eyebrow">Graphics · HCI · Machine Learning</p>
+      <h1 class="hero-title">I build things at the edge of rendering, interaction, and learning.</h1>
+      <p class="lede">
+        Master's student in Interaction, Graphics &amp; Design at Institut Polytechnique de Paris,
+        with a background in Intelligent Systems from Isfahan University of Technology.
+        I like projects that sit between how something looks and how someone uses it —
+        real-time rendering, simulation, and the ML that quietly powers both.
+      </p>
+      <div class="hero-links">
+        <a class="btn primary" href="#work">See work</a>
+        <a class="btn ghost" href="your-cv.pdf">Download CV</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="skills-section">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Toolkit</h2>
+        <span class="tag">languages / frameworks / tools</span>
+      </div>
+      <div class="skills">
+        <span>C++</span><span>Python</span><span>OpenGL</span><span>WebGPU</span>
+        <span>GLSL / WGSL</span><span>PyTorch</span><span>scikit-learn</span>
+        <span>OpenCV</span><span>NumPy</span><span>React</span><span>LaTeX</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="work">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Selected Work</h2>
+        <span class="tag">04 projects</span>
+      </div>
+      <div class="projects">
+
+        <div class="project">
+          <div class="thumb">[ GIF/render placeholder ]</div>
+          <div>
+            <h3>Cornell Box Renderer <span class="date">Image Synthesis coursework</span></h3>
+            <p>
+              A dual rasterization / ray-tracing renderer in WebGPU. Möller–Trumbore intersection,
+              Lambert shading, shadow rays, and multiple animated colored lights — built and debugged
+              from scratch, shader compilation errors and shadow acne included.
+            </p>
+            <div class="tags"><span>WebGPU</span><span>WGSL</span><span>Ray Tracing</span></div>
+            <div class="links">
+              <a href="#">Code</a><a href="#">Write-up</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="thumb">[ GIF/render placeholder ]</div>
+          <div>
+            <h3>SPH Fluid Simulation <span class="date">Simulation coursework</span></h3>
+            <p>
+              A smoothed-particle hydrodynamics fluid solver, with adaptive time-stepping
+              and moving obstacles — including the process of taming exploding particles
+              into a stable simulation.
+            </p>
+            <div class="tags"><span>C++</span><span>Physics Simulation</span></div>
+            <div class="links">
+              <a href="#">Code</a><a href="#">Video</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="thumb">[ before/after placeholder ]</div>
+          <div>
+            <h3>Inpainting a Miniature Painting <span class="date">Image editing project</span></h3>
+            <p>
+              An algorithmic pipeline to remove painted elements from a traditional miniature
+              painting while preserving frame and background texture — comparing color-distance
+              masking and inpainting approaches in Python.
+            </p>
+            <div class="tags"><span>Python</span><span>PIL</span><span>NumPy</span><span>OpenCV</span></div>
+            <div class="links">
+              <a href="#">Code</a><a href="#">Before / after</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="project">
+          <div class="thumb">[ chart / dashboard placeholder ]</div>
+          <div>
+            <h3>Influencer Detection on French Twitter <span class="date">ML competition</span></h3>
+            <p>
+              Classified users as influencers vs. observers despite missing follower data —
+              feature engineering (TF-IDF, sentence embeddings, behavioral signals), XGBoost
+              with GPU acceleration, and ensembling, taken from 95% validation / 84% leaderboard
+              overfitting down to a properly generalizing model.
+            </p>
+            <div class="tags"><span>XGBoost</span><span>NLP</span><span>Feature Engineering</span></div>
+            <div class="links">
+              <a href="#">Code</a><a href="#">Report</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="experience">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Experience &amp; Research</h2>
+        <span class="tag">edit freely — placeholders below</span>
+      </div>
+
+      <div class="xp-item">
+        <div>
+          <div class="role">M.Sc. Interaction, Graphics &amp; Design</div>
+          <div class="org">Institut Polytechnique de Paris</div>
+        </div>
+        <div class="when placeholder">[dates]</div>
+      </div>
+
+      <div class="xp-item">
+        <div>
+          <div class="role">B.Eng. Computer Engineering — Intelligent Systems</div>
+          <div class="org">Isfahan University of Technology</div>
+        </div>
+        <div class="when placeholder">[dates]</div>
+      </div>
+
+      <div class="xp-item">
+        <div>
+          <div class="role placeholder">[role / lab]</div>
+          <div class="org placeholder">[HCI research — e.g. Presentstrates, motor learning analysis, earthquake prediction visualization]</div>
+        </div>
+        <div class="when placeholder">[dates]</div>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="section" id="contact">
+    <div class="wrap">
+      <div class="section-head">
+        <h2>Contact</h2>
+      </div>
+      <div class="contact-row">
+        <a href="mailto:your-email@example.com" class="placeholder">your-email@example.com</a>
+        <a href="#" class="placeholder">GitHub</a>
+        <a href="#" class="placeholder">LinkedIn</a>
+      </div>
+      <p class="fine">Built as a starter — swap the bracketed placeholders and thumbnail boxes for your own text, links, and GIFs.</p>
+    </div>
+  </footer>
+
+</main>
+
+</body>
+</html>
