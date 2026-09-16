@@ -250,8 +250,9 @@
               such as thin foliage and contact regions. The project compares percentage-closer
               filtering (PCF), percentage-closer soft shadows (PCSS), variance shadow maps (VSM),
               summed-area variance shadow maps (SAVSM), and Variance Soft Shadow Mapping (VSSM)
-              variants, focusing on penumbra stability, light leaking, and the tradeoff between
-              quality and speed.
+              variants. To make VSSM more stable in practice, I added a hybrid mode that combines
+              adaptive subdivision with exact PCF fallback, reducing light leaking and unstable
+              contact shadows.
             </p>
             <div class="tags"><span>WebGPU</span><span>WGSL</span><span>PCF</span><span>PCSS</span><span>VSM</span><span>SAVSM</span><span>VSSM</span><span>Soft Shadows</span></div>
             <div class="links">
