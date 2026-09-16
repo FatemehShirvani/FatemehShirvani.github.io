@@ -140,7 +140,8 @@
     text-align:center; padding:10px;
   }
   .thumb.media-thumb{padding:0; overflow:hidden; background:#05070a;}
-  .thumb.media-thumb video{width:100%; height:100%; object-fit:cover; display:block;}
+  .thumb.media-thumb video,
+  .thumb.media-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
   .project h3{margin:0 0 8px; font-size:17px;}
   .project h3 .date{
     font-family:var(--mono); font-weight:400; font-size:12px;
@@ -262,17 +263,21 @@
         </div>
 
         <div class="project">
-          <div class="thumb">[ GIF/render placeholder ]</div>
+          <a class="thumb media-thumb" href="assets/plant-growth/plant-growth-presentation.mp4" aria-label="Open the Plant Growth Modeling presentation video">
+            <img src="assets/plant-growth/plant-growth-thumb.jpg" alt="Seasonal procedural tree growth results">
+          </a>
           <div>
-            <h3>SPH Fluid Simulation <span class="date">Simulation coursework</span></h3>
+            <h3>Plant Growth Modeling <span class="date">Feb 2026</span></h3>
             <p>
-              A smoothed-particle hydrodynamics fluid solver, with adaptive time-stepping
-              and moving obstacles — including the process of taming exploding particles
-              into a stable simulation.
+              A real-time C++/OpenGL system for procedural tree growth, seasonal behavior,
+              and wind animation. The project combines stochastic L-system branching,
+              staged leaf growth and detachment, alpha-tested foliage shadows, and filtered
+              branch/leaf motion so the tree can move through growth, fall, and winter
+              states without visible popping or unstable leaf transitions.
             </p>
-            <div class="tags"><span>C++</span><span>Physics Simulation</span></div>
+            <div class="tags"><span>C++</span><span>OpenGL</span><span>Procedural Modeling</span><span>Real-Time Simulation</span></div>
             <div class="links">
-              <a href="#">Code</a><a href="#">Video</a>
+              <a href="assets/plant-growth/plant-growth-report.pdf">Report</a><a href="assets/plant-growth/plant-growth-presentation.mp4">Video</a>
             </div>
           </div>
         </div>
