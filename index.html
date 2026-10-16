@@ -3,503 +3,1256 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fatemeh — Graphics &amp; Interaction</title>
+<title>Fatemeh Shirvani — Graphics &amp; Interaction</title>
+<meta name="description" content="Fatemeh Shirvani — Master's student in Interaction, Graphics & Design at Institut Polytechnique de Paris. Real-time rendering, simulation, XR and machine learning.">
+<meta name="theme-color" content="#05070b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#F1F1EC;
-    --ink:#14181A;
-    --ink-soft:#4A5052;
-    --line:#D7D7CD;
-    --signal:#1F7A5C;
-    --signal-soft:#E4EFE9;
-    --mono: "JetBrains Mono", "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-    --sans: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --bg:#05070b;
+    --bg-2:#0a0f17;
+    --glass:rgba(255,255,255,0.035);
+    --glass-strong:rgba(255,255,255,0.06);
+    --glass-border:rgba(255,255,255,0.08);
+    --glass-border-hi:rgba(255,255,255,0.18);
+    --text:#e9eef3;
+    --muted:#8a96a5;
+    --faint:#4b5563;
+    --teal:#5ef2d6;
+    --cyan:#38bdf8;
+    --violet:#a78bfa;
+    --pink:#f0abfc;
+    --display:"Space Grotesk", "Inter", system-ui, sans-serif;
+    --sans:"Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ease:cubic-bezier(.22,1,.36,1);
+    --radius:22px;
   }
 
   *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; background:var(--bg);}
   body{
     margin:0;
-    background:var(--paper);
-    color:var(--ink);
+    background:var(--bg);
+    color:var(--text);
     font-family:var(--sans);
-    line-height:1.55;
+    line-height:1.6;
     -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
   }
-  a{color:inherit;}
-  a:focus-visible, button:focus-visible{outline:2px solid var(--signal); outline-offset:3px;}
+  ::selection{background:rgba(94,242,214,.25); color:#fff;}
+  a{color:inherit; text-decoration:none;}
+  img{display:block; max-width:100%;}
+  button{font:inherit; color:inherit; background:none; border:0; cursor:pointer;}
+  :focus-visible{outline:2px solid var(--teal); outline-offset:4px; border-radius:8px;}
 
-  .wrap{max-width:920px; margin:0 auto; padding:0 28px;}
+  .wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+  @media (max-width:640px){ .wrap{padding:0 16px;} }
+
+  /* ---------- ambient background ---------- */
+  .ambient{position:fixed; inset:0; z-index:-2; overflow:hidden; pointer-events:none;}
+  .ambient .blob{
+    position:absolute; border-radius:50%;
+    opacity:.6; will-change:transform;
+    animation:drift 26s ease-in-out infinite alternate;
+  }
+  .blob.b1{width:46vw; height:46vw; left:-12vw; top:-14vw; background:radial-gradient(circle, rgba(94,242,214,.28), rgba(94,242,214,.08) 40%, transparent 70%);}
+  .blob.b2{width:40vw; height:40vw; right:-10vw; top:20vh; background:radial-gradient(circle, rgba(167,139,250,.26), rgba(167,139,250,.07) 40%, transparent 70%); animation-duration:32s; animation-delay:-8s;}
+  .blob.b3{width:38vw; height:38vw; left:25vw; bottom:-20vw; background:radial-gradient(circle, rgba(56,189,248,.18), rgba(56,189,248,.05) 40%, transparent 70%); animation-duration:38s; animation-delay:-14s;}
+  @keyframes drift{
+    0%{transform:translate3d(0,0,0) scale(1);}
+    50%{transform:translate3d(6vw,4vh,0) scale(1.12);}
+    100%{transform:translate3d(-4vw,8vh,0) scale(.94);}
+  }
+  .ambient .grid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 70% 55% at 50% 0%, #000 30%, transparent 75%);
+  }
+  .grain{
+    position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.035;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+
+  /* ---------- custom cursor ---------- */
+  .cursor-dot, .cursor-ring{position:fixed; top:0; left:0; pointer-events:none; z-index:100; opacity:0; transition:opacity .3s;}
+  .cursor-dot, .cursor-ring{will-change:transform;}
+  .cursor-dot{width:8px; height:8px; margin:-4px 0 0 -4px; border-radius:50%; background:#fff; mix-blend-mode:difference;}
+  .cursor-ring{
+    width:38px; height:38px; margin:-19px 0 0 -19px; border-radius:50%;
+    border:1px solid rgba(255,255,255,.35);
+    background:radial-gradient(circle, rgba(167,139,250,.18), transparent 70%);
+    transition:width .35s var(--ease), height .35s var(--ease), margin .35s var(--ease), background .35s, border-color .35s, opacity .3s;
+  }
+  body.has-cursor .cursor-dot, body.has-cursor .cursor-ring{opacity:1;}
+  body.cursor-hover .cursor-ring{
+    width:72px; height:72px; margin:-36px 0 0 -36px;
+    border-color:rgba(94,242,214,.6);
+    background:radial-gradient(circle, rgba(94,242,214,.16), transparent 70%);
+  }
+  body.cursor-down .cursor-ring{width:28px; height:28px; margin:-14px 0 0 -14px;}
+  @media (hover:hover) and (pointer:fine){
+    body.has-cursor, body.has-cursor a, body.has-cursor button{cursor:none;}
+  }
+
+  /* ---------- scroll progress ---------- */
+  .progress{
+    position:fixed; top:0; left:0; right:0; height:2px; z-index:60;
+    transform-origin:0 50%; transform:scaleX(0); will-change:transform;
+    background:linear-gradient(90deg, var(--teal), var(--violet), var(--pink));
+    box-shadow:0 0 12px rgba(94,242,214,.6);
+  }
 
   /* ---------- nav ---------- */
-  header.site{
-    position:sticky; top:0; z-index:10;
-    background:color-mix(in srgb, var(--paper) 88%, transparent);
-    backdrop-filter:blur(6px);
-    border-bottom:1px solid var(--line);
+  .nav{
+    position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:50;
+    display:flex; align-items:center; gap:4px;
+    padding:6px; border-radius:999px;
+    background:rgba(12,16,24,.55);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 10px 40px -10px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
   }
-  .navrow{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:16px 0;
+  .nav .logo{
+    font-family:var(--display); font-weight:700; font-size:14px; letter-spacing:.04em;
+    width:36px; height:36px; border-radius:50%;
+    display:grid; place-items:center; margin-right:4px;
+    background:linear-gradient(135deg, rgba(94,242,214,.25), rgba(167,139,250,.25));
+    border:1px solid var(--glass-border-hi);
   }
-  .navrow .name{
-    font-family:var(--mono); font-size:14px; letter-spacing:0.02em;
-    text-decoration:none;
+  .nav a.link{
+    position:relative; z-index:1;
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    padding:9px 16px; border-radius:999px; color:var(--muted);
+    transition:color .3s;
   }
-  .navrow nav a{
-    font-family:var(--mono); font-size:13px; text-decoration:none;
-    color:var(--ink-soft); margin-left:22px;
+  .nav a.link:hover, .nav a.link.active{color:var(--text);}
+  .nav .pill{
+    position:absolute; z-index:0; top:6px; height:calc(100% - 12px); left:0; width:0;
+    border-radius:999px; background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.08);
+    transition:left .5s var(--ease), width .5s var(--ease), opacity .3s; opacity:0;
   }
-  .navrow nav a:hover{color:var(--ink);}
+  @media (max-width:640px){
+    .nav{top:12px; width:calc(100% - 24px); justify-content:space-between;}
+    .nav a.link{padding:8px 9px; font-size:10.5px; letter-spacing:.03em;}
+  }
+
+  /* ---------- side rail ---------- */
+  .rail{
+    position:fixed; left:28px; bottom:32px; z-index:40;
+    display:flex; flex-direction:column; align-items:center; gap:16px;
+  }
+  .rail a{
+    width:38px; height:38px; display:grid; place-items:center; border-radius:50%;
+    color:var(--muted); border:1px solid var(--glass-border); background:rgba(14,19,27,.8);
+    transition:color .3s, border-color .3s, transform .4s var(--ease);
+  }
+  .rail a:hover{color:var(--teal); border-color:rgba(94,242,214,.4);}
+  .rail svg{width:17px; height:17px;}
+  .rail .line{width:1px; height:70px; background:linear-gradient(var(--glass-border-hi), transparent);}
+  @media (max-width:900px){ .rail{display:none;} }
 
   /* ---------- hero ---------- */
   .hero{
-    padding:96px 0 72px;
-    position:relative;
-    overflow:hidden;
+    min-height:100svh; position:relative;
+    display:grid; align-items:center;
+    padding:120px 0 80px;
   }
-  .hero .grid-bg{
-    position:absolute; inset:0;
-    background-image:
-      linear-gradient(var(--line) 1px, transparent 1px),
-      linear-gradient(90deg, var(--line) 1px, transparent 1px);
-    background-size:42px 42px;
-    mask-image:radial-gradient(ellipse 70% 60% at 70% 20%, black, transparent);
-    opacity:0.55;
-    pointer-events:none;
+  .hero-grid{display:grid; grid-template-columns:1.25fr .9fr; gap:40px; align-items:center;}
+  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+
+  .kicker{
+    display:inline-flex; align-items:center; gap:10px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted);
+    padding:7px 14px 7px 10px; border-radius:999px;
+    background:var(--glass); border:1px solid var(--glass-border);
   }
-  .eyebrow{
-    font-family:var(--mono); font-size:13px; color:var(--signal);
-    text-transform:uppercase; letter-spacing:0.08em; margin:0 0 18px;
-    position:relative;
+  .kicker .live{width:8px; height:8px; border-radius:50%; background:var(--teal); box-shadow:0 0 0 0 rgba(94,242,214,.6); animation:pulse 2.2s infinite;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(94,242,214,.55);}
+    70%{box-shadow:0 0 0 10px rgba(94,242,214,0);}
+    100%{box-shadow:0 0 0 0 rgba(94,242,214,0);}
   }
-  h1.hero-title{
-    font-size:clamp(34px, 5vw, 54px);
-    line-height:1.08;
-    margin:0 0 22px;
-    max-width:14ch;
-    font-weight:650;
-    letter-spacing:-0.01em;
-    position:relative;
+
+  .hello{font-family:var(--mono); color:var(--teal); font-size:14px; margin:34px 0 6px; letter-spacing:.06em;}
+  h1.name{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(52px, 10vw, 132px);
+    line-height:.9; letter-spacing:-.045em; margin:0;
   }
-  .hero p.lede{
-    max-width:56ch;
-    font-size:17px;
-    color:var(--ink-soft);
-    margin:0 0 30px;
-    position:relative;
-  }
-  .hero-links{position:relative; display:flex; gap:14px; flex-wrap:wrap;}
-  .btn{
-    font-family:var(--mono); font-size:13px;
-    padding:10px 16px;
-    border:1px solid var(--ink);
-    text-decoration:none;
+  h1.name .line{display:block; overflow:hidden; padding-bottom:.06em;}
+  h1.name .ch{
     display:inline-block;
+    transform:translateY(105%) rotate(6deg); opacity:0;
+    animation:rise 1.1s var(--ease) forwards;
+    animation-delay:calc(var(--i) * 45ms + 150ms);
   }
-  .btn.primary{background:var(--ink); color:var(--paper);}
-  .btn.primary:hover{background:var(--signal); border-color:var(--signal);}
-  .btn.ghost:hover{background:var(--ink); color:var(--paper);}
+  h1.name .line + .line .ch{
+    background:linear-gradient(100deg, var(--teal) 0%, #b6f5ff 40%, var(--violet) 80%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  @keyframes rise{to{transform:none; opacity:1;}}
 
-  /* ---------- section labels ---------- */
-  .section{padding:64px 0;}
-  .section + .section{border-top:1px solid var(--line);}
-  .section-head{
-    display:flex; align-items:baseline; justify-content:space-between;
-    margin-bottom:34px; gap:16px; flex-wrap:wrap;
+  .roles{
+    margin:28px 0 0; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+    font-family:var(--display); font-size:clamp(20px, 2.4vw, 28px); font-weight:500; color:var(--muted);
   }
-  .section-head h2{
-    font-size:22px; margin:0; font-weight:650;
+  .roles .swap{position:relative; display:inline-grid; color:var(--text); min-width:12ch;}
+  .roles .swap span{
+    grid-area:1/1; opacity:0; transform:translateY(60%);
+    transition:opacity .6s var(--ease), transform .7s var(--ease);
+    white-space:nowrap;
   }
-  .section-head .tag{
-    font-family:var(--mono); font-size:12px; color:var(--ink-soft);
+  .roles .swap span.on{opacity:1; transform:none;}
+  .roles .swap span.off{opacity:0; transform:translateY(-60%);}
+
+  .lede{max-width:54ch; color:var(--muted); font-size:16.5px; margin:24px 0 36px;}
+  .lede strong{color:var(--text); font-weight:500;}
+
+  .cta{display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    position:relative; display:inline-flex; align-items:center; gap:10px;
+    padding:14px 22px; border-radius:999px;
+    font-family:var(--mono); font-size:12.5px; letter-spacing:.08em; text-transform:uppercase;
+    border:1px solid var(--glass-border-hi);
+    background:var(--glass);
+    overflow:hidden; isolation:isolate;
+    transition:border-color .4s, color .4s, transform .5s var(--ease);
+  }
+  .btn::before{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background:radial-gradient(120px circle at var(--bx,50%) var(--by,50%), rgba(94,242,214,.35), transparent 70%);
+    opacity:0; transition:opacity .4s;
+  }
+  .btn:hover::before{opacity:1;}
+  .btn:hover{border-color:rgba(94,242,214,.5);}
+  .btn.primary{
+    background:linear-gradient(135deg, rgba(94,242,214,.95), rgba(167,139,250,.95));
+    color:#04121a; border-color:transparent; font-weight:500;
+  }
+  .btn.primary::before{background:radial-gradient(120px circle at var(--bx,50%) var(--by,50%), rgba(255,255,255,.55), transparent 70%);}
+  .btn .arrow{transition:transform .4s var(--ease);}
+  .btn:hover .arrow{transform:translateX(4px);}
+
+  /* hero orb */
+  .orb-stage{position:relative; aspect-ratio:1; width:min(100%, 460px); justify-self:center; perspective:900px;}
+  .orb{
+    position:absolute; inset:8%; border-radius:50%;
+    transform-style:preserve-3d;
+    transform:rotateX(var(--ox,0deg)) rotateY(var(--oy,0deg));
+    transition:transform .8s var(--ease);
+  }
+  .orb .core{
+    position:absolute; inset:0; border-radius:50%;
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,.55), transparent 22%),
+      radial-gradient(circle at 70% 75%, rgba(167,139,250,.55), transparent 45%),
+      radial-gradient(circle at 30% 70%, rgba(94,242,214,.55), transparent 50%),
+      radial-gradient(circle, #0d1a26 30%, #05070b 72%);
+    box-shadow:
+      inset -30px -40px 80px rgba(0,0,0,.65),
+      inset 20px 20px 60px rgba(94,242,214,.15),
+      0 0 120px rgba(94,242,214,.18),
+      0 0 220px rgba(167,139,250,.12);
+    animation:breathe 7s ease-in-out infinite;
+  }
+  .orb .swirl{
+    position:absolute; inset:-2%; border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0 20%, rgba(94,242,214,.6) 30%, transparent 42% 60%, rgba(167,139,250,.6) 72%, transparent 85%);
+    mask:radial-gradient(circle, transparent 66%, #000 67%, #000 69%, transparent 70%);
+    -webkit-mask:radial-gradient(circle, transparent 66%, #000 67%, #000 69%, transparent 70%);
+    animation:spin 9s linear infinite; will-change:transform;
+  }
+  .orb .ring{
+    position:absolute; inset:-14%; border-radius:50%;
+    border:1px solid rgba(255,255,255,.08);
+    transform:rotateX(72deg);
+    animation:spin 22s linear infinite;
+  }
+  .orb .ring.r2{inset:-24%; transform:rotateX(72deg) rotateY(18deg); border-color:rgba(94,242,214,.14); animation-duration:30s; animation-direction:reverse;}
+  .orb .ring::after{
+    content:""; position:absolute; top:-4px; left:50%; width:8px; height:8px; border-radius:50%;
+    background:var(--teal); box-shadow:0 0 14px var(--teal);
+  }
+  .orb .ring.r2::after{background:var(--violet); box-shadow:0 0 14px var(--violet);}
+  @keyframes spin{to{rotate:360deg;}}
+  body.hero-off .orb *, body.hero-off .orb .ring::after, body.hero-off .chip, body.hero-off .live, body.hero-off .mouse::after{animation-play-state:paused;}
+  body.marquee-off .marquee .track{animation-play-state:paused;}
+  @keyframes breathe{0%,100%{scale:1;} 50%{scale:1.03;}}
+
+  .chip{
+    position:absolute; z-index:2;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em;
+    padding:8px 13px; border-radius:12px;
+    background:rgba(14,20,30,.82); border:1px solid var(--glass-border-hi);
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    animation:float 6s ease-in-out infinite;
+    white-space:nowrap;
+  }
+  .chip i{font-style:normal; color:var(--teal); margin-right:6px;}
+  .chip.c1{top:8%; left:-6%;}
+  .chip.c2{top:44%; right:-8%; animation-delay:-2s;}
+  .chip.c3{bottom:8%; left:6%; animation-delay:-4s;}
+  .chip.c2 i{color:var(--violet);} .chip.c3 i{color:var(--pink);}
+  @keyframes float{0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);}}
+  @media (max-width:900px){ .orb-stage{width:min(80%, 360px); order:-1; margin-top:20px;} .chip.c1{left:0;} .chip.c2{right:0;} }
+
+  .scroll-hint{
+    position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+    font-family:var(--mono); font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--faint);
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .scroll-hint .mouse{width:22px; height:34px; border-radius:12px; border:1px solid var(--faint); position:relative;}
+  .scroll-hint .mouse::after{
+    content:""; position:absolute; left:50%; top:7px; width:3px; height:7px; margin-left:-1.5px; border-radius:2px;
+    background:var(--teal); animation:wheel 1.8s var(--ease) infinite;
+  }
+  @keyframes wheel{0%{opacity:0; transform:translateY(-3px);} 30%{opacity:1;} 100%{opacity:0; transform:translateY(10px);}}
+  @media (max-height:700px){ .scroll-hint{display:none;} }
+
+  /* ---------- marquee ---------- */
+  .marquee{
+    position:relative; overflow:hidden; padding:26px 0;
+    border-block:1px solid var(--glass-border);
+    background:linear-gradient(90deg, rgba(94,242,214,.03), rgba(167,139,250,.04));
+    mask-image:linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .marquee .track{display:flex; width:max-content; animation:marq 40s linear infinite;}
+  .marquee:hover .track{animation-play-state:paused;}
+  .marquee span{
+    font-family:var(--display); font-weight:600; font-size:clamp(28px, 4vw, 52px); letter-spacing:-.02em;
+    padding:0 28px; white-space:nowrap;
+    color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.22);
+    transition:color .4s, -webkit-text-stroke-color .4s;
+  }
+  .marquee span:hover{color:var(--text); -webkit-text-stroke-color:transparent;}
+  .marquee span.dot{-webkit-text-stroke:0; color:var(--teal); padding:0 4px;}
+  @keyframes marq{to{transform:translateX(-50%);}}
+
+  /* ---------- sections ---------- */
+  section.block{padding:130px 0; position:relative;}
+  @media (max-width:640px){ section.block{padding:90px 0;} }
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
+    color:var(--teal); margin:0 0 18px; display:flex; align-items:center; gap:12px;
+  }
+  .eyebrow::before{content:""; width:28px; height:1px; background:currentColor;}
+  h2.title{
+    font-family:var(--display); font-weight:600;
+    font-size:clamp(38px, 6vw, 76px); line-height:1; letter-spacing:-.035em;
+    margin:0 0 20px;
+  }
+  h2.title em{
+    font-style:normal;
+    background:linear-gradient(100deg, var(--teal), var(--violet));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .section-sub{color:var(--muted); max-width:56ch; margin:0 0 60px; font-size:16px;}
+  .head-row{display:flex; justify-content:space-between; align-items:flex-end; gap:30px; flex-wrap:wrap;}
+  .count{font-family:var(--mono); font-size:12px; color:var(--muted); letter-spacing:.1em; margin-bottom:64px;}
+
+  /* reveal */
+  [data-reveal]{opacity:0; transform:translateY(40px); transition:opacity 1s var(--ease), transform 1.1s var(--ease); transition-delay:var(--d, 0s);}
+  [data-reveal].in{opacity:1; transform:none;}
+
+  /* ---------- glass card base ---------- */
+  .glass{
+    position:relative;
+    background:linear-gradient(160deg, rgba(22,28,38,.72), rgba(10,14,20,.6));
+    border:1px solid var(--glass-border);
+    border-radius:var(--radius);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 20px 60px -20px rgba(0,0,0,.6);
+  }
+  /* mouse-follow spotlight + border light */
+  .spot{isolation:isolate;}
+  .spot::before{
+    content:""; position:absolute; inset:0; border-radius:inherit; z-index:-1; pointer-events:none;
+    background:radial-gradient(420px circle at var(--mx,50%) var(--my,50%), rgba(94,242,214,.10), transparent 45%);
+    opacity:0; transition:opacity .5s;
+  }
+  .spot::after{
+    content:""; position:absolute; inset:-1px; border-radius:inherit; pointer-events:none; padding:1px;
+    background:radial-gradient(300px circle at var(--mx,50%) var(--my,50%), rgba(94,242,214,.7), rgba(167,139,250,.35) 40%, transparent 70%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity .5s;
+  }
+  .spot:hover::before, .spot:hover::after{opacity:1;}
+
+  /* ---------- about ---------- */
+  .about-grid{display:grid; grid-template-columns:1fr 1.15fr; gap:60px; align-items:start;}
+  @media (max-width:900px){ .about-grid{grid-template-columns:1fr; gap:30px;} }
+  .about-text{font-size:clamp(19px, 2vw, 24px); line-height:1.5; color:var(--muted); font-family:var(--display); font-weight:400; letter-spacing:-.01em; margin:0;}
+  .about-text .w{transition:color .5s;}
+  .about-text .w.lit{color:var(--text);}
+  .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:40px;}
+  .stat{padding:22px 20px;}
+  .stat b{display:block; font-family:var(--display); font-size:38px; font-weight:600; letter-spacing:-.03em; line-height:1;}
+  .stat b sup{font-size:.5em; color:var(--teal); margin-left:2px;}
+  .stat span{display:block; margin-top:8px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} .stat b{font-size:30px;} }
+
+  /* ---------- what I do ---------- */
+  .services{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px;}
+  @media (max-width:760px){ .services{grid-template-columns:1fr;} }
+  .service{padding:34px 32px 30px; overflow:hidden; transition:transform .6s var(--ease);}
+  .service .corner{position:absolute; width:16px; height:16px; border-color:rgba(255,255,255,.35); border-style:solid; border-width:0; transition:all .5s var(--ease);}
+  .service .corner.tl{top:14px; left:14px; border-top-width:1px; border-left-width:1px;}
+  .service .corner.tr{top:14px; right:14px; border-top-width:1px; border-right-width:1px;}
+  .service .corner.bl{bottom:14px; left:14px; border-bottom-width:1px; border-left-width:1px;}
+  .service .corner.br{bottom:14px; right:14px; border-bottom-width:1px; border-right-width:1px;}
+  .service:hover .corner{border-color:var(--teal); width:26px; height:26px;}
+  .service .num{font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.1em;}
+  .service .icon{
+    width:52px; height:52px; border-radius:16px; display:grid; place-items:center; margin:18px 0 22px;
+    background:linear-gradient(135deg, rgba(94,242,214,.18), rgba(167,139,250,.18));
+    border:1px solid var(--glass-border-hi);
+    transition:transform .6s var(--ease);
+  }
+  .service:hover .icon{transform:rotate(-8deg) scale(1.08);}
+  .service .icon svg{width:24px; height:24px; color:var(--teal);}
+  .service h3{font-family:var(--display); font-size:26px; font-weight:600; letter-spacing:-.02em; margin:0 0 10px;}
+  .service p{color:var(--muted); margin:0 0 20px; font-size:15px;}
+  .minitags{display:flex; flex-wrap:wrap; gap:7px;}
+  .minitags span{
+    font-family:var(--mono); font-size:11px; letter-spacing:.03em; color:#cfe9e4;
+    padding:5px 10px; border-radius:999px;
+    background:rgba(94,242,214,.07); border:1px solid rgba(94,242,214,.16);
   }
 
-  /* ---------- skills ---------- */
-  .skills{display:flex; flex-wrap:wrap; gap:8px;}
-  .skills span{
-    font-family:var(--mono); font-size:12.5px;
-    border:1px solid var(--line);
-    padding:5px 10px;
-    color:var(--ink-soft);
+  /* ---------- work ---------- */
+  .works{display:grid; grid-template-columns:repeat(12, 1fr); gap:22px;}
+  .work{grid-column:span 6; display:flex; flex-direction:column; overflow:hidden; text-align:left; padding:0;
+        transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
+        transition:transform .5s var(--ease), border-color .4s; will-change:transform;}
+  .work.wide{grid-column:span 12;}
+  .work.wide{flex-direction:row;}
+  .work.wide .media{flex:1.3; aspect-ratio:auto; min-height:360px;}
+  .work.wide .body{flex:1; justify-content:center;}
+  @media (max-width:900px){
+    .work, .work.wide{grid-column:span 12;}
+    .work.wide{flex-direction:column;}
+    .work.wide .media{min-height:0; aspect-ratio:16/10;}
   }
+  .work .media{
+    position:relative; aspect-ratio:16/10; overflow:hidden; margin:8px 8px 0; border-radius:16px;
+    background:#070a0f;
+  }
+  .work.wide .media{margin:8px 0 8px 8px;}
+  @media (max-width:900px){ .work.wide .media{margin:8px 8px 0;} }
+  .work .media img, .work .media video{width:100%; height:100%; object-fit:cover; display:block; transition:transform 1.2s var(--ease);}
+  .work .media.fit{background:#f4f4f1;}
+  .work .media.fit img{object-fit:contain; padding:14px;}
+  .work .media.logo{background:radial-gradient(circle at 50% 40%, #121a24, #070a0f);}
+  .work .media.logo img{object-fit:cover; mix-blend-mode:screen; opacity:.95;}
+  .work:hover .media img, .work:hover .media video{transform:scale(1.05);}
+  .work .media::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, transparent 55%, rgba(5,7,11,.55));
+  }
+  .work .media.fit::after{background:none;}
+  .work .open{
+    position:absolute; right:14px; top:14px; z-index:2;
+    width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+    background:rgba(10,14,20,.75); border:1px solid var(--glass-border-hi);
+    transform:scale(.6) rotate(-45deg); opacity:0;
+    transition:transform .5s var(--ease), opacity .4s;
+  }
+  .work:hover .open{transform:none; opacity:1;}
+  .work .body{padding:24px 26px 26px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .meta{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase;}
+  .meta .idx{color:var(--teal);}
+  .work h3{font-family:var(--display); font-size:24px; line-height:1.15; font-weight:600; letter-spacing:-.02em; margin:0;}
+  .work p.short{color:var(--muted); font-size:14.5px; margin:0;}
+  .work .minitags{margin-top:auto; padding-top:8px;}
 
-  /* ---------- projects ---------- */
-  .projects{display:grid; grid-template-columns:1fr; gap:0;}
-  .project{
-    display:grid; grid-template-columns:220px 1fr; gap:26px;
-    padding:26px 0; border-top:1px solid var(--line);
-    align-items:start;
+  /* ---------- project dialog ---------- */
+  dialog.sheet{
+    width:min(920px, calc(100% - 24px)); max-height:calc(100svh - 40px);
+    padding:0; border:1px solid var(--glass-border-hi); border-radius:26px;
+    color:var(--text);
+    background:linear-gradient(160deg, rgba(20,26,36,.97), rgba(8,11,16,.98));
+    box-shadow:0 40px 120px rgba(0,0,0,.7);
+    overflow:auto; overscroll-behavior:contain;
   }
-  .project:first-child{border-top:none;}
-  .thumb{
-    aspect-ratio:4/3; background:var(--signal-soft);
-    border:1px solid var(--line);
-    display:flex; align-items:center; justify-content:center;
-    font-family:var(--mono); font-size:11px; color:var(--signal);
-    text-align:center; padding:10px;
+  dialog.sheet::backdrop{background:rgba(3,5,8,.6); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);}
+  dialog.sheet[open]{animation:pop .6s var(--ease);}
+  dialog.sheet[open]::backdrop{animation:fade .4s ease;}
+  @keyframes pop{from{opacity:0; transform:translateY(30px) scale(.96);} to{opacity:1; transform:none;}}
+  @keyframes fade{from{opacity:0;}}
+  .sheet .s-media{margin:10px; border-radius:18px; overflow:hidden; background:#070a0f; max-height:440px; display:grid; place-items:center;}
+  .sheet .s-media img, .sheet .s-media video{width:100%; max-height:440px; object-fit:contain; display:block;}
+  .sheet .s-media.fit{background:#f4f4f1;}
+  .sheet .s-media.logo{padding:60px 0;}
+  .sheet .s-media.logo img{width:60%; mix-blend-mode:screen;}
+  .sheet .s-body{padding:18px 34px 36px;}
+  .sheet .s-body h3{font-family:var(--display); font-size:clamp(26px, 4vw, 38px); font-weight:600; letter-spacing:-.03em; line-height:1.1; margin:6px 0 16px;}
+  .sheet .s-body p{color:#b7c1cc; font-size:15.5px; line-height:1.75; margin:0 0 22px;}
+  .sheet .s-links{display:flex; gap:12px; flex-wrap:wrap; margin-top:26px;}
+  .sheet .close{
+    position:sticky; top:14px; float:right; margin:14px 14px -58px 0; z-index:3;
+    width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
+    background:rgba(10,14,20,.7); border:1px solid var(--glass-border-hi);
+    transition:transform .5s var(--ease), border-color .3s;
   }
-  .thumb.media-thumb{padding:0; overflow:hidden; background:#05070a;}
-  .thumb.media-thumb video,
-  .thumb.media-thumb img{width:100%; height:100%; object-fit:cover; display:block;}
-  .thumb.chart-thumb{background:#f7f7f5; aspect-ratio:16/9;}
-  .thumb.chart-thumb img{object-fit:contain;}
-  .thumb.table-thumb{background:#f7f7f5; aspect-ratio:1025/1495;}
-  .thumb.table-thumb img{object-fit:contain;}
-  .thumb.game-thumb{aspect-ratio:16/9; background:#d8b7a0;}
-  .project h3{margin:0 0 8px; font-size:17px;}
-  .project h3 .date{
-    font-family:var(--mono); font-weight:400; font-size:12px;
-    color:var(--ink-soft); margin-left:10px;
-  }
-  .project p{margin:0 0 10px; color:var(--ink-soft); font-size:14.5px; max-width:60ch;}
-  .project .tags{display:flex; flex-wrap:wrap; gap:6px;}
-  .project .tags span{
-    font-family:var(--mono); font-size:11px; color:var(--signal);
-    background:var(--signal-soft); padding:3px 8px;
-  }
-  .project .links a{
-    font-family:var(--mono); font-size:12px; text-decoration:underline;
-    margin-right:14px; color:var(--ink-soft);
-  }
-  .project .links a:hover{color:var(--ink);}
+  .sheet .close:hover{transform:rotate(90deg); border-color:var(--teal);}
+  @media (max-width:640px){ .sheet .s-body{padding:14px 20px 28px;} }
 
+  /* ---------- timeline ---------- */
+  .timeline{position:relative; max-width:940px;}
+  .timeline .rail-line{position:absolute; left:170px; top:6px; bottom:6px; width:1px; background:var(--glass-border);}
+  .timeline .rail-fill{
+    position:absolute; left:170px; top:6px; bottom:6px; width:1px;
+    transform-origin:50% 0; transform:scaleY(0); will-change:transform;
+    background:linear-gradient(var(--teal), var(--violet));
+    box-shadow:0 0 12px var(--teal);
+  }
+  .tl-item{display:grid; grid-template-columns:170px 1fr; position:relative; padding-bottom:44px;}
+  .tl-item:last-child{padding-bottom:0;}
+  .tl-when{font-family:var(--display); font-size:24px; font-weight:500; letter-spacing:-.02em; color:var(--muted); padding-right:34px; text-align:right; padding-top:18px; transition:color .5s;}
+  .tl-item.active .tl-when{color:var(--text);}
+  .tl-dot{
+    position:absolute; left:170px; top:28px; width:13px; height:13px; margin-left:-6px; border-radius:50%;
+    background:var(--bg); border:1px solid var(--faint);
+    transition:background .5s, border-color .5s, box-shadow .5s;
+  }
+  .tl-item.active .tl-dot{background:var(--teal); border-color:var(--teal); box-shadow:0 0 0 5px rgba(94,242,214,.15), 0 0 20px var(--teal);}
+  .tl-card{margin-left:34px; padding:24px 26px;}
+  .tl-card .role{font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:-.015em; margin:0;}
+  .tl-card .org{font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--teal); margin:6px 0 10px; text-transform:uppercase;}
+  .tl-card p{margin:0; color:var(--muted); font-size:14.5px;}
   @media (max-width:640px){
-    .project{grid-template-columns:1fr;}
-    .thumb{aspect-ratio:16/9;}
+    .timeline .rail-line, .timeline .rail-fill, .tl-dot{left:6px;}
+    .tl-item{grid-template-columns:1fr; padding-left:28px;}
+    .tl-when{text-align:left; padding:0 0 10px; font-size:18px;}
+    .tl-dot{top:6px;}
+    .tl-card{margin-left:0;}
   }
 
-  /* ---------- experience ---------- */
-  .xp-item{
-    display:grid; grid-template-columns:1fr auto; gap:10px;
-    padding:14px 0; border-top:1px solid var(--line);
+  /* ---------- tech stack ---------- */
+  .stack-stage{position:relative; height:clamp(420px, 60vh, 600px); overflow:hidden; padding:0;}
+  .stack-stage canvas{position:absolute; inset:0; width:100%; height:100%;}
+  .stack-stage .hint{position:absolute; left:24px; bottom:20px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); pointer-events:none;}
+  .stack-stage .big{
+    position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
+    font-family:var(--display); font-weight:700; letter-spacing:-.05em; font-size:clamp(60px, 13vw, 180px);
+    color:transparent; -webkit-text-stroke:1px rgba(255,255,255,.07);
   }
-  .xp-item:first-child{border-top:none;}
-  .xp-item .role{font-weight:600; font-size:15px;}
-  .xp-item .org{color:var(--ink-soft); font-size:14px;}
-  .xp-item .when{font-family:var(--mono); font-size:12px; color:var(--ink-soft); white-space:nowrap;}
 
-  /* ---------- contact / footer ---------- */
-  footer{padding:56px 0 80px;}
-  .contact-row{display:flex; flex-wrap:wrap; gap:22px; font-family:var(--mono); font-size:14px;}
-  .contact-row a{text-decoration:underline;}
-  .fine{margin-top:40px; font-size:12px; color:var(--ink-soft); font-family:var(--mono);}
+  /* ---------- contact ---------- */
+  .contact{padding:140px 0 60px; text-align:center; position:relative;}
+  .contact h2{
+    font-family:var(--display); font-weight:700;
+    font-size:clamp(48px, 10vw, 140px); line-height:.92; letter-spacing:-.05em; margin:0 0 34px;
+  }
+  .contact h2 span{
+    background:linear-gradient(100deg, var(--teal), #b6f5ff 40%, var(--violet) 80%);
+    background-size:200% 100%;
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    animation:sheen 6s linear infinite; animation-play-state:var(--sheen, paused);
+  }
+  @keyframes sheen{to{background-position:-200% 0;}}
+  .contact .lede{margin:0 auto 40px;}
+  .contact .cta{justify-content:center;}
+  .contact-cards{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:80px; text-align:left;}
+  @media (max-width:760px){ .contact-cards{grid-template-columns:1fr;} }
+  .c-card{padding:24px 24px; display:flex; flex-direction:column; gap:6px;}
+  .c-card .k{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint);}
+  .c-card .v{font-family:var(--display); font-size:19px; font-weight:500;}
+  a.c-card .v::after{content:" ↗"; color:var(--teal); display:inline-block; transition:transform .4s var(--ease);}
+  a.c-card:hover .v::after{transform:translate(3px,-3px);}
 
-  .placeholder{color:var(--signal); font-style:italic;}
+  footer.foot{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    padding:30px 0 40px; margin-top:80px; border-top:1px solid var(--glass-border);
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--faint);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important;}
+    html{scroll-behavior:auto;}
+    [data-reveal]{opacity:1; transform:none;}
+    .marquee .track{animation:none;}
+  }
 </style>
 </head>
 <body>
 
-<header class="site">
-  <div class="wrap navrow">
-    <a class="name" href="#top">FATEMEH&nbsp;/&nbsp;PORTFOLIO</a>
-    <nav>
-      <a href="#work">Work</a>
-      <a href="#experience">Experience</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </div>
-</header>
+<div class="ambient" aria-hidden="true">
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="grid"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"></div>
+
+<nav class="nav" aria-label="Main">
+  <a class="logo" href="#top" aria-label="Back to top">FS</a>
+  <span class="pill" aria-hidden="true"></span>
+  <a class="link" href="#about">About</a>
+  <a class="link" href="#work">Work</a>
+  <a class="link" href="#experience">Career</a>
+  <a class="link" href="#contact">Contact</a>
+</nav>
+
+<aside class="rail" aria-label="Social links">
+  <a href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" aria-label="GitHub" data-magnetic>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+  </a>
+  <span class="line" aria-hidden="true"></span>
+</aside>
 
 <main id="top">
 
+  <!-- ================= HERO ================= -->
   <section class="hero">
-    <div class="grid-bg" aria-hidden="true"></div>
-    <div class="wrap">
-      <p class="eyebrow">Graphics · HCI · Machine Learning</p>
-      <h1 class="hero-title">I build things at the edge of rendering, interaction, and learning.</h1>
-      <p class="lede">
-        Master's student in Interaction, Graphics &amp; Design at Institut Polytechnique de Paris,
-        with a background in Intelligent Systems from Isfahan University of Technology.
-        I like projects that sit between how something looks and how someone uses it —
-        real-time rendering, simulation, and the ML that quietly powers both.
-      </p>
-      <div class="hero-links">
-        <a class="btn primary" href="#work">See work</a>
-        <a class="btn ghost" href="your-cv.pdf">Download CV</a>
+    <div class="wrap hero-grid">
+      <div>
+        <span class="kicker"><span class="live" aria-hidden="true"></span>M.Sc. · Institut Polytechnique de Paris</span>
+        <p class="hello">Hello! I'm</p>
+        <h1 class="name" aria-label="Fatemeh Shirvani">
+          <span class="line" aria-hidden="true" data-split>Fatemeh</span>
+          <span class="line" aria-hidden="true" data-split>Shirvani</span>
+        </h1>
+        <div class="roles">
+          <span>I build</span>
+          <span class="swap" aria-live="polite">
+            <span class="on">real-time renderers.</span>
+            <span>physics simulations.</span>
+            <span>immersive VR.</span>
+            <span>learning systems.</span>
+          </span>
+        </div>
+        <p class="lede">
+          Working at the edge of <strong>rendering</strong>, <strong>interaction</strong>, and <strong>learning</strong> —
+          projects that sit between how something looks and how someone uses it.
+        </p>
+        <div class="cta">
+          <a class="btn primary" href="#work" data-magnetic>See work <span class="arrow">→</span></a>
+          <a class="btn" href="#contact" data-magnetic>Get in touch</a>
+        </div>
+      </div>
+
+      <div class="orb-stage" aria-hidden="true">
+        <div class="orb">
+          <div class="ring"></div>
+          <div class="ring r2"></div>
+          <div class="core"></div>
+          <div class="swirl"></div>
+        </div>
+        <span class="chip c1"><i>●</i>WebGPU · WGSL</span>
+        <span class="chip c2"><i>●</i>3D Gaussian Splatting</span>
+        <span class="chip c3"><i>●</i>C++ · OpenGL</span>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true"><span class="mouse"></span>Scroll</div>
+  </section>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Real-Time Rendering</span><span class="dot">✦</span>
+      <span>Simulation</span><span class="dot">✦</span>
+      <span>Geometry Processing</span><span class="dot">✦</span>
+      <span>Virtual Reality</span><span class="dot">✦</span>
+      <span>Interaction Design</span><span class="dot">✦</span>
+      <span>Machine Learning</span><span class="dot">✦</span>
+    </div>
+  </div>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="block" id="about">
+    <div class="wrap about-grid">
+      <div data-reveal>
+        <p class="eyebrow">About me</p>
+        <h2 class="title">Where pixels<br>meet <em>people.</em></h2>
+      </div>
+      <div>
+        <p class="about-text" data-words>
+          I'm a Master's student in Interaction, Graphics &amp; Design at Institut Polytechnique de Paris,
+          with a background in Intelligent Systems from Isfahan University of Technology. I like projects
+          that sit between how something looks and how someone uses it — real-time rendering, simulation,
+          and the machine learning that quietly powers both.
+        </p>
+        <div class="stats">
+          <div class="stat glass spot" data-reveal style="--d:.05s"><b data-count="10">0</b><span>Projects</span></div>
+          <div class="stat glass spot" data-reveal style="--d:.15s"><b data-count="96" data-suffix="%">0</b><span>Top accuracy</span></div>
+          <div class="stat glass spot" data-reveal style="--d:.25s"><b data-count="6" data-suffix="DoF">0</b><span>VR navigation</span></div>
+        </div>
       </div>
     </div>
   </section>
 
-  <section class="section" id="skills-section">
+  <!-- ================= WHAT I DO ================= -->
+  <section class="block" id="services" style="padding-top:20px">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Toolkit</h2>
-        <span class="tag">languages / frameworks / tools</span>
+      <div data-reveal>
+        <p class="eyebrow">What I do</p>
+        <h2 class="title">Four things I <em>love</em> building.</h2>
+        <p class="section-sub">From GPU shaders to tracked ski poles — a toolkit spanning graphics, physics, interaction and data.</p>
       </div>
-      <div class="skills">
-        <span>C++</span><span>Python</span><span>OpenGL</span><span>WebGPU</span>
-        <span>GLSL / WGSL</span><span>PyTorch</span><span>scikit-learn</span>
-        <span>OpenCV</span><span>NumPy</span><span>React</span><span>LaTeX</span>
+      <div class="services">
+        <article class="service glass spot" data-reveal style="--d:0s">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <span class="num">01</span>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></div>
+          <h3>Real-Time Rendering</h3>
+          <p>Shadow filtering, foliage, and novel-view synthesis — renderers that stay fast and stable under hard cases.</p>
+          <div class="minitags"><span>WebGPU</span><span>GLSL / WGSL</span><span>OpenGL</span><span>3DGS</span></div>
+        </article>
+        <article class="service glass spot" data-reveal style="--d:.1s">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <span class="num">02</span>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 17c3-6 6 2 9-4s6 2 9-4"/><circle cx="6" cy="6" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg></div>
+          <h3>Simulation &amp; Geometry</h3>
+          <p>Rigid bodies, SPH fluids, procedural plants and subdivision surfaces, built from first principles in C++.</p>
+          <div class="minitags"><span>C++</span><span>SPH</span><span>Rigid Body</span><span>L-Systems</span></div>
+        </article>
+        <article class="service glass spot" data-reveal style="--d:.2s">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <span class="num">03</span>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4l-2-2.5h-2L9 17H5a2 2 0 0 1-2-2V8Z"/><circle cx="8" cy="11.5" r="1.6"/><circle cx="16" cy="11.5" r="1.6"/></svg></div>
+          <h3>Interaction &amp; XR</h3>
+          <p>Embodied VR locomotion and playful direct-manipulation interfaces, evaluated with real tasks.</p>
+          <div class="minitags"><span>Unity</span><span>C#</span><span>OpenXR</span><span>Meta Quest</span></div>
+        </article>
+        <article class="service glass spot" data-reveal style="--d:.3s">
+          <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
+          <span class="num">04</span>
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="m7 7 3.4 3.6M7 17l3.4-3.6M13.6 10.6 17 7M13.6 13.4 17 17"/></svg></div>
+          <h3>Machine Learning</h3>
+          <p>From fine-tuned language models to motion-signal features — careful pipelines, honest evaluation.</p>
+          <div class="minitags"><span>PyTorch</span><span>scikit-learn</span><span>XGBoost</span><span>LoRA</span></div>
+        </article>
       </div>
     </div>
   </section>
 
-  <section class="section" id="work">
+  <!-- ================= WORK ================= -->
+  <section class="block" id="work">
     <div class="wrap">
-      <div class="section-head">
-        <h2>Selected Work</h2>
-        <span class="tag">10 projects</span>
-      </div>
-      <div class="projects">
-
-        <div class="project">
-          <div class="thumb media-thumb">
-            <img src="assets/3dgs-vr/essilorluxottica-logo.png" alt="EssilorLuxottica">
-          </div>
-          <div>
-            <h3>3D Gaussian Splatting for Immersive VR <span class="date">Jun-Aug 2026</span></h3>
-            <p>
-              An R&amp;D internship project at EssilorLuxottica focused on recreating an existing
-              physical indoor refraction room as an immersive 3D scene for room-scale VR. I
-              developed an end-to-end workflow spanning photographic capture and preprocessing,
-              Structure-from-Motion calibration with COLMAP, 3D Gaussian Splatting training, and
-              held-out novel-view evaluation using image-quality and perceptual metrics. The
-              reconstructed scene was integrated into Unity with VRSplat and OpenXR to evaluate
-              stereoscopic rendering, six-degree-of-freedom navigation, viewpoint consistency,
-              and runtime performance. The study also identified reconstruction limitations
-              around low-texture surfaces, reflections, thin structures, and disocclusions.
-            </p>
-            <div class="tags"><span>3DGS</span><span>VRSplat</span><span>Unity</span><span>COLMAP</span><span>OpenXR</span></div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="assets/soft-shadows/demo.html" aria-label="Open the Variance Soft Shadow Mapping demo">
-            <img src="assets/soft-shadows/soft-shadow-loop-card.gif" alt="Variance soft-shadow methods on a rotating plant scene">
-          </a>
-          <div>
-            <h3>Variance Soft Shadow Mapping <span class="date">Mar-Apr 2026</span></h3>
-            <p>
-              A real-time WebGPU renderer for studying soft-shadow filtering in difficult cases
-              such as thin foliage and contact regions. The project compares percentage-closer
-              filtering (PCF), percentage-closer soft shadows (PCSS), variance shadow maps (VSM),
-              summed-area variance shadow maps (SAVSM), and Variance Soft Shadow Mapping (VSSM)
-              variants. To make VSSM more stable in practice, I added a hybrid mode that combines
-              adaptive subdivision with exact PCF fallback, reducing light leaking and unstable
-              contact shadows.
-            </p>
-            <div class="tags"><span>WebGPU</span><span>WGSL</span><span>Real-Time Rendering</span><span>Shadow Mapping</span></div>
-            <div class="links">
-              <a href="assets/soft-shadows/demo.html">Demo</a><a href="https://github.com/FatemehShirvani/VarianceSoftShadowMapping">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="https://github.com/FatemehShirvani/PlantGrowthModeling" aria-label="Open the Plant Growth Modeling code repository">
-            <img src="assets/plant-growth/plant-growth-loop.gif" alt="Procedural tree progressing through seasonal changes">
-          </a>
-          <div>
-            <h3>Plant Growth Modeling <span class="date">Feb 2026</span></h3>
-            <p>
-              A real-time C++/OpenGL system for procedural tree growth, seasonal behavior,
-              and wind animation. The project combines stochastic L-system branching,
-              staged leaf growth and detachment, alpha-tested foliage shadows, and filtered
-              branch/leaf motion so the tree can move through growth, fall, and winter
-              states without visible popping or unstable leaf transitions.
-            </p>
-            <div class="tags"><span>C++</span><span>OpenGL</span><span>Procedural Modeling</span><span>Real-Time Simulation</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/PlantGrowthModeling">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="https://github.com/FatemehShirvani/LoopSubdivisionSurfaces" aria-label="Open the Loop Subdivision Surfaces repository">
-            <img src="assets/subdivision-surfaces/subdivision-loop.gif" alt="Loop subdivision smoothing a triangular monkey mesh">
-          </a>
-          <div>
-            <h3>Loop Subdivision Surfaces <span class="date">Jan 2026</span></h3>
-            <p>
-              A C++/OpenGL implementation of Loop subdivision for progressively smoothing
-              triangular meshes. The algorithm builds vertex and edge adjacency, applies
-              valence-dependent masks to original vertices, creates shared odd vertices with
-              interior and boundary rules, and replaces every triangle with four refined faces.
-              Interactive wireframe inspection, bounded subdivision depth, and undo make the
-              topology and convergence behavior easier to examine.
-            </p>
-            <div class="tags"><span>C++</span><span>OpenGL</span><span>Geometry Processing</span><span>Mesh Topology</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/LoopSubdivisionSurfaces">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="https://github.com/FatemehShirvani/RigidBodySimulation" aria-label="Open the Rigid Body Simulation repository">
-            <img src="assets/rigid-body/rigid-body-loop.gif" alt="Boxes and cylinders colliding in a rigid-body simulation">
-          </a>
-          <div>
-            <h3>Multi-Body Rigid Body Simulation <span class="date">Jan 2026</span></h3>
-            <p>
-              A C++ rigid-body simulator for mixed boxes and cylinders under gravity,
-              randomized impulses, and contact constraints. The system integrates linear and
-              angular momentum with body-specific inertia tensors, uses normalized quaternions
-              for stable rotation, and resolves wall and inter-body contacts through impulses,
-              restitution, Coulomb friction, positional correction, damping, and sleep states.
-            </p>
-            <div class="tags"><span>C++</span><span>Rigid Body Dynamics</span><span>Collision Response</span><span>OpenGL</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/RigidBodySimulation">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="https://github.com/FatemehShirvani/FluidSPHSimulation" aria-label="Open the Fluid SPH Simulation repository">
-            <img src="assets/fluid-simulation/fluid-sph-loop.gif" alt="Particles flowing around obstacles in a two-dimensional SPH fluid simulation">
-          </a>
-          <div>
-            <h3>Smoothed Particle Hydrodynamics <span class="date">Feb 2026</span></h3>
-            <p>
-              A two-dimensional Smoothed Particle Hydrodynamics simulator for incompressible
-              flow around static and moving obstacles. It combines cubic-spline kernels,
-              uniform-grid neighbor search, density, pressure, and viscosity forces, adaptive
-              CFL-style time stepping, and particle-boundary collision handling, with grid and
-              velocity-field diagnostics for inspecting the simulation.
-            </p>
-            <div class="tags"><span>C++</span><span>SPH</span><span>Fluid Simulation</span><span>Numerical Methods</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/FluidSPHSimulation">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb" href="https://github.com/FatemehShirvani/HCI-for-Mixed-Reality" aria-label="Open the Ski Locomotion in Virtual Reality repository">
-            <img src="assets/ski-locomotion/ski-locomotion-loop.gif" alt="First-person virtual-reality skiing with tracked poles and checkpoint targets">
-          </a>
-          <div>
-            <h3>Ski Locomotion in Virtual Reality <span class="date">Feb 2026</span></h3>
-            <p>
-              An embodied locomotion technique for Meta Quest that turns tracked ski-pole
-              strokes into forward impulses. The Unity implementation combines pole-tip ground
-              contact and controller motion with slope-aware acceleration, steering, braking,
-              friction, and ramp jumps, then evaluates the interaction through timed checkpoint
-              and selection tasks with in-headset performance logging.
-            </p>
-            <div class="tags"><span>Unity</span><span>C#</span><span>Virtual Reality</span><span>Interaction Design</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/HCI-for-Mixed-Reality">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb game-thumb" href="https://github.com/FatemehShirvani/Interactive-Wardrobe-Customization" aria-label="Open the Interactive Wardrobe Customization repository">
-            <img src="assets/purr-and-pattern/overview.png" alt="Pixel-art character and interactive wardrobe customization interface">
-          </a>
-          <div>
-            <h3>Interactive Wardrobe Customization <span class="date">Sep–Oct 2025</span></h3>
-            <p>
-              An interactive 2D fashion game developed in Unity and C# to explore varied
-              direct-manipulation techniques through a playful wardrobe. Players drag
-              axis-constrained doors and drawers, rearrange hangers, snap garments onto
-              customizable characters, create colors and patterns with matching-color
-              suggestions, and save, import, or export their designs.
-            </p>
-            <div class="tags"><span>Unity</span><span>C#</span><span>Interaction Design</span><span>2D UI</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/Interactive-Wardrobe-Customization">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb chart-thumb" href="https://github.com/FatemehShirvani/French-Twitter-Influencer-Classification" aria-label="Open the French Twitter user classification repository">
-            <img src="assets/twitter-classification/model-results.png" alt="Test accuracy comparison across text embeddings, metadata, and hybrid feature sets">
-          </a>
-          <div>
-            <h3>Influencer Detection on French Twitter <span class="date">Dec 2025</span></h3>
-            <p>
-              Classified users as influencers or observers from French tweets and profile data.
-              The final pipeline combines LoRA-fine-tuned CamemBERT representations, behavioral
-              features, user-level aggregation, and regularized XGBoost, reaching 85.7% final accuracy.
-            </p>
-            <div class="tags"><span>CamemBERT</span><span>LoRA</span><span>XGBoost</span><span>NLP</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/French-Twitter-Influencer-Classification">Code</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="project">
-          <a class="thumb media-thumb table-thumb" href="https://github.com/FatemehShirvani/Motor-Learning-Assessment" aria-label="Open the Motor Learning Assessment repository">
-            <img src="assets/motor-learning/final-results-table.png" alt="Final classification results table for each foot-drawn shape and the pooled dataset">
-          </a>
-          <div>
-            <h3>Motor Learning Assessment from Foot-Drawn Shapes <span class="date">Jun–Sep 2024</span></h3>
-            <p>
-              Investigated how practice changes movement quality in a seven-session foot-drawing
-              task. I corrected sampling and quantization artifacts, extracted structural and
-              kinematic features such as SSIM, duration, velocity, curvature, acceleration, jerk,
-              and smoothness, and compared clustering and classification models. In
-              leave-one-subject-out evaluation, shape-specific accuracy reached 96%, the pooled
-              Random Forest reached 79%, and the best early-versus-late session grouping reached
-              81% on unseen participants.
-            </p>
-            <div class="tags"><span>Python</span><span>MATLAB</span><span>Motor Learning</span><span>Signal Processing</span><span>Machine Learning</span></div>
-            <div class="links">
-              <a href="https://github.com/FatemehShirvani/Motor-Learning-Assessment">Code</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="experience">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Experience &amp; Research</h2>
-        <span class="tag">edit freely — placeholders below</span>
-      </div>
-
-      <div class="xp-item">
+      <div class="head-row" data-reveal>
         <div>
-          <div class="role">M.Sc. Interaction, Graphics &amp; Design</div>
-          <div class="org">Institut Polytechnique de Paris</div>
+          <p class="eyebrow">Selected work</p>
+          <h2 class="title">My <em>work.</em></h2>
         </div>
-        <div class="when placeholder">[dates]</div>
+        <span class="count">10 PROJECTS · 2024 — 2026</span>
       </div>
-
-      <div class="xp-item">
-        <div>
-          <div class="role">B.Eng. Computer Engineering — Intelligent Systems</div>
-          <div class="org">Isfahan University of Technology</div>
-        </div>
-        <div class="when placeholder">[dates]</div>
-      </div>
-
-      <div class="xp-item">
-        <div>
-          <div class="role placeholder">[role / lab]</div>
-          <div class="org placeholder">[HCI research — e.g. Presentstrates, motor learning analysis, earthquake prediction visualization]</div>
-        </div>
-        <div class="when placeholder">[dates]</div>
-      </div>
-
+      <div class="works" id="works"></div>
     </div>
   </section>
 
-  <footer class="section" id="contact">
-    <div class="wrap">
-      <div class="section-head">
-        <h2>Contact</h2>
-      </div>
-      <div class="contact-row">
-        <a href="mailto:your-email@example.com" class="placeholder">your-email@example.com</a>
-        <a href="#" class="placeholder">GitHub</a>
-        <a href="#" class="placeholder">LinkedIn</a>
-      </div>
-      <p class="fine">Built as a starter — swap the bracketed placeholders and thumbnail boxes for your own text, links, and GIFs.</p>
+  <dialog class="sheet" id="sheet" aria-labelledby="sheet-title">
+    <button class="close" type="button" aria-label="Close" data-close>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="s-media"></div>
+    <div class="s-body">
+      <div class="meta"><span class="idx"></span><span class="date"></span></div>
+      <h3 id="sheet-title"></h3>
+      <p class="s-desc"></p>
+      <div class="minitags s-tags"></div>
+      <div class="s-links"></div>
     </div>
-  </footer>
+  </dialog>
+
+  <!-- ================= CAREER ================= -->
+  <section class="block" id="experience">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="eyebrow">Career</p>
+        <h2 class="title">Experience &amp; <em>research.</em></h2>
+        <p class="section-sub">Industry R&amp;D, graduate study in graphics and interaction, and an engineering foundation in intelligent systems.</p>
+      </div>
+      <div class="timeline" id="timeline">
+        <span class="rail-line" aria-hidden="true"></span>
+        <span class="rail-fill" aria-hidden="true"></span>
+
+        <div class="tl-item">
+          <div class="tl-when">2026</div>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card glass spot" data-reveal>
+            <h3 class="role">R&amp;D Intern — 3D Gaussian Splatting for VR</h3>
+            <div class="org">EssilorLuxottica · Jun – Aug 2026</div>
+            <p>Recreated a physical refraction room as an immersive room-scale VR scene: capture, COLMAP calibration, 3DGS training, novel-view evaluation, and Unity integration with VRSplat and OpenXR.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-when">M.Sc.</div>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card glass spot" data-reveal>
+            <h3 class="role">Interaction, Graphics &amp; Design</h3>
+            <div class="org">Institut Polytechnique de Paris</div>
+            <p>Real-time rendering, physically based simulation, geometry processing, mixed reality, and HCI — the home of most projects on this page.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-when">2024</div>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card glass spot" data-reveal>
+            <h3 class="role">Research — Motor Learning Assessment</h3>
+            <div class="org">Foot-drawn shapes study · Jun – Sep 2024</div>
+            <p>Analysed how practice changes movement quality across seven sessions, reaching 96% shape-specific accuracy in leave-one-subject-out evaluation.</p>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-when">B.Eng.</div>
+          <span class="tl-dot" aria-hidden="true"></span>
+          <div class="tl-card glass spot" data-reveal>
+            <h3 class="role">Computer Engineering — Intelligent Systems</h3>
+            <div class="org">Isfahan University of Technology</div>
+            <p>Foundations in algorithms, machine learning, and signal processing.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TECH STACK ================= -->
+  <section class="block" id="stack" style="padding-top:40px">
+    <div class="wrap">
+      <div data-reveal>
+        <p class="eyebrow">Toolkit</p>
+        <h2 class="title">My <em>tech stack.</em></h2>
+        <p class="section-sub">Languages, frameworks and tools I reach for. Go ahead — push them around.</p>
+      </div>
+      <div class="stack-stage glass" data-reveal>
+        <div class="big" aria-hidden="true">STACK</div>
+        <canvas id="stack-canvas" aria-label="Interactive bubbles showing: C++, Python, OpenGL, WebGPU, GLSL / WGSL, PyTorch, scikit-learn, OpenCV, NumPy, React, LaTeX, Unity, C#, COLMAP, MATLAB" role="img"></canvas>
+        <span class="hint">Move · drag · fling</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONTACT ================= -->
+  <section class="contact" id="contact">
+    <div class="wrap">
+      <p class="eyebrow" style="justify-content:center" data-reveal>Contact</p>
+      <h2 data-reveal>Let's build<br><span>something.</span></h2>
+      <p class="lede" data-reveal>Open to research and engineering roles in graphics, XR and interactive systems.</p>
+      <div class="cta" data-reveal>
+        <a class="btn primary" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-magnetic>GitHub <span class="arrow">↗</span></a>
+      </div>
+      <div class="contact-cards">
+        <a class="c-card glass spot" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-reveal style="--d:0s">
+          <span class="k">Code</span><span class="v">github.com/FatemehShirvani</span>
+        </a>
+        <div class="c-card glass spot" data-reveal style="--d:.1s">
+          <span class="k">Based in</span><span class="v">Paris, France</span>
+        </div>
+        <div class="c-card glass spot" data-reveal style="--d:.2s">
+          <span class="k">Studying at</span><span class="v">Institut Polytechnique de Paris</span>
+        </div>
+      </div>
+      <footer class="foot">
+        <span>© <span id="year">2026</span> Fatemeh Shirvani</span>
+        <span>Designed &amp; built with care</span>
+      </footer>
+    </div>
+  </section>
 
 </main>
 
+<script>
+(() => {
+  'use strict';
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* ---------- projects ---------- */
+  const projects = [
+    { title:'3D Gaussian Splatting for Immersive VR', date:'Jun–Aug 2026', img:'assets/3dgs-vr/essilorluxottica-logo.png', kind:'logo', alt:'EssilorLuxottica', wide:true,
+      short:'R&D internship at EssilorLuxottica: a real refraction room rebuilt as a room-scale VR scene.',
+      desc:'An R&D internship project at EssilorLuxottica focused on recreating an existing physical indoor refraction room as an immersive 3D scene for room-scale VR. I developed an end-to-end workflow spanning photographic capture and preprocessing, Structure-from-Motion calibration with COLMAP, 3D Gaussian Splatting training, and held-out novel-view evaluation using image-quality and perceptual metrics. The reconstructed scene was integrated into Unity with VRSplat and OpenXR to evaluate stereoscopic rendering, six-degree-of-freedom navigation, viewpoint consistency, and runtime performance. The study also identified reconstruction limitations around low-texture surfaces, reflections, thin structures, and disocclusions.',
+      tags:['3DGS','VRSplat','Unity','COLMAP','OpenXR'], links:[] },
+    { title:'Variance Soft Shadow Mapping', date:'Mar–Apr 2026', img:'assets/soft-shadows/soft-shadow-loop-card.gif', alt:'Variance soft-shadow methods on a rotating plant scene',
+      short:'A WebGPU renderer comparing PCF, PCSS, VSM, SAVSM and a hybrid VSSM on thin foliage.',
+      desc:'A real-time WebGPU renderer for studying soft-shadow filtering in difficult cases such as thin foliage and contact regions. The project compares percentage-closer filtering (PCF), percentage-closer soft shadows (PCSS), variance shadow maps (VSM), summed-area variance shadow maps (SAVSM), and Variance Soft Shadow Mapping (VSSM) variants. To make VSSM more stable in practice, I added a hybrid mode that combines adaptive subdivision with exact PCF fallback, reducing light leaking and unstable contact shadows.',
+      tags:['WebGPU','WGSL','Real-Time Rendering','Shadow Mapping'],
+      links:[['Live demo','assets/soft-shadows/demo.html'],['Code','https://github.com/FatemehShirvani/VarianceSoftShadowMapping']] },
+    { title:'Plant Growth Modeling', date:'Feb 2026', img:'assets/plant-growth/plant-growth-loop.gif', alt:'Procedural tree progressing through seasonal changes',
+      short:'Procedural tree growth, seasons and wind in real-time C++/OpenGL.',
+      desc:'A real-time C++/OpenGL system for procedural tree growth, seasonal behavior, and wind animation. The project combines stochastic L-system branching, staged leaf growth and detachment, alpha-tested foliage shadows, and filtered branch/leaf motion so the tree can move through growth, fall, and winter states without visible popping or unstable leaf transitions.',
+      tags:['C++','OpenGL','Procedural Modeling','Real-Time Simulation'],
+      links:[['Code','https://github.com/FatemehShirvani/PlantGrowthModeling']] },
+    { title:'Smoothed Particle Hydrodynamics', date:'Feb 2026', img:'assets/fluid-simulation/fluid-sph-loop.gif', alt:'Particles flowing around obstacles in a two-dimensional SPH fluid simulation',
+      short:'A 2D SPH fluid solver for incompressible flow around moving obstacles.',
+      desc:'A two-dimensional Smoothed Particle Hydrodynamics simulator for incompressible flow around static and moving obstacles. It combines cubic-spline kernels, uniform-grid neighbor search, density, pressure, and viscosity forces, adaptive CFL-style time stepping, and particle-boundary collision handling, with grid and velocity-field diagnostics for inspecting the simulation.',
+      tags:['C++','SPH','Fluid Simulation','Numerical Methods'],
+      links:[['Code','https://github.com/FatemehShirvani/FluidSPHSimulation']] },
+    { title:'Ski Locomotion in Virtual Reality', date:'Feb 2026', img:'assets/ski-locomotion/ski-locomotion-loop.gif', alt:'First-person virtual-reality skiing with tracked poles and checkpoint targets',
+      short:'Embodied Meta Quest locomotion that turns ski-pole strokes into motion.',
+      desc:'An embodied locomotion technique for Meta Quest that turns tracked ski-pole strokes into forward impulses. The Unity implementation combines pole-tip ground contact and controller motion with slope-aware acceleration, steering, braking, friction, and ramp jumps, then evaluates the interaction through timed checkpoint and selection tasks with in-headset performance logging.',
+      tags:['Unity','C#','Virtual Reality','Interaction Design'],
+      links:[['Code','https://github.com/FatemehShirvani/HCI-for-Mixed-Reality']] },
+    { title:'Loop Subdivision Surfaces', date:'Jan 2026', img:'assets/subdivision-surfaces/subdivision-loop.gif', alt:'Loop subdivision smoothing a triangular monkey mesh',
+      short:'Progressive mesh smoothing with Loop subdivision, wireframe inspection and undo.',
+      desc:'A C++/OpenGL implementation of Loop subdivision for progressively smoothing triangular meshes. The algorithm builds vertex and edge adjacency, applies valence-dependent masks to original vertices, creates shared odd vertices with interior and boundary rules, and replaces every triangle with four refined faces. Interactive wireframe inspection, bounded subdivision depth, and undo make the topology and convergence behavior easier to examine.',
+      tags:['C++','OpenGL','Geometry Processing','Mesh Topology'],
+      links:[['Code','https://github.com/FatemehShirvani/LoopSubdivisionSurfaces']] },
+    { title:'Multi-Body Rigid Body Simulation', date:'Jan 2026', img:'assets/rigid-body/rigid-body-loop.gif', alt:'Boxes and cylinders colliding in a rigid-body simulation',
+      short:'Boxes and cylinders under impulses, friction, restitution and sleep states.',
+      desc:'A C++ rigid-body simulator for mixed boxes and cylinders under gravity, randomized impulses, and contact constraints. The system integrates linear and angular momentum with body-specific inertia tensors, uses normalized quaternions for stable rotation, and resolves wall and inter-body contacts through impulses, restitution, Coulomb friction, positional correction, damping, and sleep states.',
+      tags:['C++','Rigid Body Dynamics','Collision Response','OpenGL'],
+      links:[['Code','https://github.com/FatemehShirvani/RigidBodySimulation']] },
+    { title:'Interactive Wardrobe Customization', date:'Sep–Oct 2025', img:'assets/purr-and-pattern/overview.png', alt:'Pixel-art character and interactive wardrobe customization interface',
+      short:'A playful 2D fashion game exploring direct-manipulation techniques.',
+      desc:'An interactive 2D fashion game developed in Unity and C# to explore varied direct-manipulation techniques through a playful wardrobe. Players drag axis-constrained doors and drawers, rearrange hangers, snap garments onto customizable characters, create colors and patterns with matching-color suggestions, and save, import, or export their designs.',
+      tags:['Unity','C#','Interaction Design','2D UI'],
+      links:[['Code','https://github.com/FatemehShirvani/Interactive-Wardrobe-Customization']] },
+    { title:'Influencer Detection on French Twitter', date:'Dec 2025', img:'assets/twitter-classification/model-results.png', kind:'fit', alt:'Test accuracy comparison across text embeddings, metadata, and hybrid feature sets',
+      short:'LoRA-tuned CamemBERT + behavioral features + XGBoost — 85.7% accuracy.',
+      desc:'Classified users as influencers or observers from French tweets and profile data. The final pipeline combines LoRA-fine-tuned CamemBERT representations, behavioral features, user-level aggregation, and regularized XGBoost, reaching 85.7% final accuracy.',
+      tags:['CamemBERT','LoRA','XGBoost','NLP'],
+      links:[['Code','https://github.com/FatemehShirvani/French-Twitter-Influencer-Classification']] },
+    { title:'Motor Learning from Foot-Drawn Shapes', date:'Jun–Sep 2024', img:'assets/motor-learning/final-results-table.png', kind:'fit', alt:'Final classification results table for each foot-drawn shape and the pooled dataset',
+      short:'Kinematic features and LOSO evaluation of practice effects — up to 96% accuracy.',
+      desc:'Investigated how practice changes movement quality in a seven-session foot-drawing task. I corrected sampling and quantization artifacts, extracted structural and kinematic features such as SSIM, duration, velocity, curvature, acceleration, jerk, and smoothness, and compared clustering and classification models. In leave-one-subject-out evaluation, shape-specific accuracy reached 96%, the pooled Random Forest reached 79%, and the best early-versus-late session grouping reached 81% on unseen participants.',
+      tags:['Python','MATLAB','Motor Learning','Signal Processing','Machine Learning'],
+      links:[['Code','https://github.com/FatemehShirvani/Motor-Learning-Assessment']] },
+  ];
+
+  const esc = s => s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  // GIFs are served as small looping MP4s (far cheaper to decode) that only play while on screen
+  const media = (p, autoplay) => {
+    if (!p.img.endsWith('.gif')) return `<img src="${p.img}" alt="${esc(p.alt)}" loading="lazy" decoding="async">`;
+    const base = p.img.slice(0, -4);
+    return `<video src="${base}.mp4" poster="${base}-poster.jpg" muted loop playsinline ${autoplay ? 'autoplay preload="auto"' : 'preload="none"'} aria-label="${esc(p.alt)}"></video>`;
+  };
+  const works = document.getElementById('works');
+  works.innerHTML = projects.map((p, i) => `
+    <button class="work glass spot${p.wide ? ' wide' : ''}" type="button" data-i="${i}" data-reveal style="--d:${(i % 2) * 0.08}s" aria-label="Open project: ${esc(p.title)}">
+      <div class="media${p.kind ? ' ' + p.kind : ''}">
+        ${media(p)}
+        <span class="open" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+      </div>
+      <div class="body">
+        <div class="meta"><span class="idx">${String(i + 1).padStart(2, '0')}</span><span>${p.date}</span></div>
+        <h3>${esc(p.title)}</h3>
+        <p class="short">${esc(p.short)}</p>
+        <div class="minitags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+      </div>
+    </button>`).join('');
+
+  const sheet = document.getElementById('sheet');
+  const sMedia = sheet.querySelector('.s-media');
+  works.addEventListener('click', e => {
+    const card = e.target.closest('.work'); if (!card) return;
+    const p = projects[+card.dataset.i];
+    sMedia.className = 's-media' + (p.kind ? ' ' + p.kind : '');
+    sMedia.innerHTML = media(p, !reduce);
+    sheet.querySelector('.idx').textContent = String(+card.dataset.i + 1).padStart(2, '0');
+    sheet.querySelector('.date').textContent = p.date;
+    sheet.querySelector('#sheet-title').textContent = p.title;
+    sheet.querySelector('.s-desc').textContent = p.desc;
+    sheet.querySelector('.s-tags').innerHTML = p.tags.map(t => `<span>${esc(t)}</span>`).join('');
+    sheet.querySelector('.s-links').innerHTML = p.links.map(([label, href], j) =>
+      `<a class="btn${j === 0 ? ' primary' : ''}" href="${href}"${href.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}>${label} <span class="arrow">↗</span></a>`).join('');
+    sheet.showModal();
+    sheet.scrollTop = 0;
+  });
+  sheet.addEventListener('click', e => {
+    if (e.target === sheet || e.target.closest('[data-close]')) sheet.close();
+  });
+  sheet.addEventListener('close', () => { sMedia.innerHTML = ''; });
+
+  const vio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      const v = en.target;
+      if (en.isIntersecting && !reduce) { v.preload = 'auto'; v.play().catch(() => {}); }
+      else v.pause();
+    });
+  }, { rootMargin: '100px 0px' });
+  works.querySelectorAll('video').forEach(v => vio.observe(v));
+
+  /* ---------- hero letters ---------- */
+  let n = 0;
+  document.querySelectorAll('[data-split]').forEach(el => {
+    el.innerHTML = [...el.textContent].map(c => `<span class="ch" style="--i:${n++}">${c}</span>`).join('');
+  });
+
+  /* ---------- rotating roles ---------- */
+  const swaps = [...document.querySelectorAll('.roles .swap span')];
+  let si = 0;
+  if (!reduce) setInterval(() => {
+    const cur = swaps[si]; si = (si + 1) % swaps.length; const nxt = swaps[si];
+    cur.classList.remove('on'); cur.classList.add('off');
+    nxt.classList.remove('off'); nxt.classList.add('on');
+    setTimeout(() => cur.classList.remove('off'), 700);
+  }, 2600);
+
+  /* ---------- word-by-word about text ---------- */
+  const about = document.querySelector('[data-words]');
+  about.innerHTML = about.innerHTML.trim().split(/(\s+)/).map(w => /\s+/.test(w) ? w : `<span class="w">${w}</span>`).join('');
+  const words = [...about.querySelectorAll('.w')];
+
+  /* ---------- reveal on scroll ---------- */
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+  }, { threshold: .12, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
+
+  /* ---------- counters ---------- */
+  const cio = new IntersectionObserver(entries => {
+    entries.forEach(en => {
+      if (!en.isIntersecting) return;
+      const el = en.target, to = +el.dataset.count, suf = el.dataset.suffix || '';
+      const t0 = performance.now(), dur = reduce ? 1 : 1600;
+      const step = t => {
+        const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 4);
+        el.innerHTML = Math.round(to * e) + (suf ? `<sup>${suf}</sup>` : '');
+        if (k < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step); cio.unobserve(el);
+    });
+  }, { threshold: .6 });
+  document.querySelectorAll('[data-count]').forEach(el => cio.observe(el));
+
+  /* ---------- scroll-linked: progress, nav pill, timeline, about words ---------- */
+  const progress = document.querySelector('.progress');
+  const links = [...document.querySelectorAll('.nav a.link')];
+  const pill = document.querySelector('.nav .pill');
+  const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+  const tl = document.getElementById('timeline');
+  const fill = tl.querySelector('.rail-fill');
+  const tlItems = [...tl.querySelectorAll('.tl-item')];
+
+  // cached layout, refreshed only on resize / load
+  let docMax = 1, secTops = [], tlTop = 0, tlH = 0, itemOffs = [], aboutTop = 0, aboutH = 0;
+  const absTop = el => el.getBoundingClientRect().top + scrollY;
+  function measure(){
+    docMax = Math.max(1, document.documentElement.scrollHeight - innerHeight);
+    secTops = sections.map(sec => absTop(sec));
+    tlTop = absTop(tl); tlH = tl.offsetHeight;
+    itemOffs = tlItems.map(it => absTop(it) - tlTop);
+    aboutTop = absTop(about); aboutH = about.offsetHeight;
+  }
+
+  let activeLink = undefined, litCount = -1, ticking = false;
+  const tlState = tlItems.map(() => false);
+  function update(){
+    ticking = false;
+    const y = scrollY, vh = innerHeight;
+    progress.style.transform = `scaleX(${Math.min(1, y / docMax)})`;
+
+    let active = null;
+    secTops.forEach((t, i) => { if (t - y < vh * .45) active = links[i]; });
+    if (active !== activeLink) {
+      activeLink = active;
+      links.forEach(l => l.classList.toggle('active', l === active));
+      if (active) { pill.style.opacity = 1; pill.style.left = active.offsetLeft + 'px'; pill.style.width = active.offsetWidth + 'px'; }
+      else pill.style.opacity = 0;
+    }
+
+    const mark = vh * .6, rel = mark - (tlTop - y);
+    fill.style.transform = `scaleY(${Math.max(0, Math.min(tlH - 12, rel)) / Math.max(1, tlH - 12)})`;
+    itemOffs.forEach((off, i) => {
+      const on = off + 28 < rel;
+      if (on !== tlState[i]) { tlState[i] = on; tlItems[i].classList.toggle('active', on); }
+    });
+
+    const k = Math.max(0, Math.min(1, (vh * .85 - (aboutTop - y)) / (aboutH + vh * .3)));
+    const lit = Math.round(k * words.length);
+    if (lit !== litCount) {
+      const lo = Math.min(lit, Math.max(litCount, 0)), hi = Math.max(lit, litCount);
+      for (let i = lo; i < hi; i++) words[i].classList.toggle('lit', i < lit);
+      litCount = lit;
+    }
+  }
+  const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', () => { measure(); onScroll(); });
+  addEventListener('load', () => { measure(); onScroll(); });
+  if ('ResizeObserver' in window) new ResizeObserver(() => { measure(); onScroll(); }).observe(document.body);
+  measure(); update();
+
+  // pause decorative animations while they are off screen
+  const watch = (el, fn) => new IntersectionObserver(([en]) => fn(en.isIntersecting)).observe(el);
+  watch(document.querySelector('.hero'), on => document.body.classList.toggle('hero-off', !on));
+  watch(document.querySelector('.marquee'), on => document.body.classList.toggle('marquee-off', !on));
+  const contactTitle = document.querySelector('.contact h2');
+  watch(contactTitle, on => contactTitle.style.setProperty('--sheen', on ? 'running' : 'paused'));
+
+  /* ---------- pointer effects (one rAF loop, sleeps when idle) ---------- */
+  if (fine && !reduce) {
+    document.body.classList.add('has-cursor');
+    const dot = document.querySelector('.cursor-dot'), ring = document.querySelector('.cursor-ring');
+    const orb = document.querySelector('.orb');
+    let mx = innerWidth / 2, my = innerHeight / 2, rx = mx, ry = my;
+    let target = null, spotEl = null, magEl = null, heroOn = true, raf = 0;
+    watch(document.querySelector('.hero'), on => { heroOn = on; });
+
+    const resetTilt = el => { el.style.setProperty('--rx', '0deg'); el.style.setProperty('--ry', '0deg'); };
+    function tick(){
+      raf = 0;
+      rx += (mx - rx) * .2; ry += (my - ry) * .2;
+      dot.style.transform = `translate3d(${mx}px,${my}px,0)`;
+      ring.style.transform = `translate3d(${rx}px,${ry}px,0)`;
+
+      const spot = target && target.closest('.spot');
+      if (spot !== spotEl) { if (spotEl && spotEl.classList.contains('work')) resetTilt(spotEl); spotEl = spot; }
+      if (spot) {
+        const r = spot.getBoundingClientRect(), x = mx - r.left, y = my - r.top;
+        spot.style.setProperty('--mx', x + 'px'); spot.style.setProperty('--my', y + 'px');
+        if (spot.classList.contains('work')) {
+          spot.style.setProperty('--ry', ((x / r.width) - .5) * 6 + 'deg');
+          spot.style.setProperty('--rx', (.5 - (y / r.height)) * 6 + 'deg');
+        }
+      }
+
+      const mag = target && target.closest('[data-magnetic]');
+      if (mag !== magEl) { if (magEl) magEl.style.transform = ''; magEl = mag; }
+      if (mag) {
+        const r = mag.getBoundingClientRect(), x = mx - r.left, y = my - r.top;
+        mag.style.setProperty('--bx', x + 'px'); mag.style.setProperty('--by', y + 'px');
+        mag.style.transform = `translate3d(${(x - r.width / 2) * .25}px, ${(y - r.height / 2) * .35}px, 0)`;
+      }
+
+      if (heroOn) {
+        orb.style.setProperty('--oy', ((mx / innerWidth) - .5) * 24 + 'deg');
+        orb.style.setProperty('--ox', (.5 - (my / innerHeight)) * 24 + 'deg');
+      }
+
+      if (Math.abs(mx - rx) > .3 || Math.abs(my - ry) > .3) raf = requestAnimationFrame(tick);
+    }
+    const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+    addEventListener('pointermove', e => { mx = e.clientX; my = e.clientY; target = e.target; kick(); }, { passive: true });
+    addEventListener('scroll', () => { target = document.elementFromPoint(mx, my); kick(); }, { passive: true });
+    addEventListener('pointerdown', () => document.body.classList.add('cursor-down'));
+    addEventListener('pointerup', () => document.body.classList.remove('cursor-down'));
+    document.addEventListener('mouseleave', () => document.body.classList.remove('has-cursor'));
+    document.addEventListener('mouseenter', () => document.body.classList.add('has-cursor'));
+    document.addEventListener('pointerover', e => {
+      document.body.classList.toggle('cursor-hover', !!e.target.closest('a, button, .work, canvas'));
+    });
+  }
+
+  /* ---------- tech stack bubbles ---------- */
+  const canvas = document.getElementById("stack-canvas");
+  const ctx = canvas.getContext('2d');
+  const skills = ['C++','Python','OpenGL','WebGPU','GLSL / WGSL','PyTorch','scikit-learn','OpenCV','NumPy','React','LaTeX','Unity','C#','COLMAP','MATLAB'];
+  const hues = [[94,242,214],[167,139,250],[240,171,252],[56,189,248],[52,211,153],[129,140,248]];
+  let W = 0, H = 0, dpr = 1, balls = [], running = false, started = false;
+  const ptr = { x: -9999, y: -9999, px: 0, py: 0, down: false, grab: null };
+
+  function size(){
+    const r = canvas.getBoundingClientRect();
+    dpr = Math.min(2, devicePixelRatio || 1);
+    W = r.width; H = r.height;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function init(){
+    size();
+    const base = Math.max(34, Math.min(62, W / 15));
+    balls = skills.map((s, i) => {
+      const r = base * (0.75 + ((i * 37) % 10) / 22);
+      return { s, r, x: W / 2 + (Math.random() - .5) * W * .8, y: -r - Math.random() * H, vx: (Math.random() - .5) * 4, vy: 0, c: hues[i % hues.length] };
+    });
+  }
+  function step(){
+    const cx = W / 2, cy = H / 2;
+    for (const b of balls) {
+      if (b === ptr.grab) { b.vx = (ptr.x - b.x) * .35; b.vy = (ptr.y - b.y) * .35; }
+      else {
+        b.vx += (cx - b.x) * .0009; b.vy += (cy - b.y) * .0012;
+        const dx = b.x - ptr.x, dy = b.y - ptr.y, d = Math.hypot(dx, dy), R = b.r + 70;
+        if (d < R && d > 0) { const f = (1 - d / R) * 1.4; b.vx += dx / d * f; b.vy += dy / d * f; }
+      }
+      b.vx *= .94; b.vy *= .94;
+      b.x += b.vx; b.y += b.vy;
+    }
+    for (let k = 0; k < 2; k++) {
+      for (let i = 0; i < balls.length; i++) for (let j = i + 1; j < balls.length; j++) {
+        const a = balls[i], b = balls[j];
+        const dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy) || .01, m = a.r + b.r + 2;
+        if (d < m) {
+          const o = (m - d) / 2, nx = dx / d, ny = dy / d;
+          a.x -= nx * o; a.y -= ny * o; b.x += nx * o; b.y += ny * o;
+          const rv = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+          if (rv < 0) { a.vx += nx * rv * .5; a.vy += ny * rv * .5; b.vx -= nx * rv * .5; b.vy -= ny * rv * .5; }
+        }
+      }
+      for (const b of balls) {
+        if (b.x < b.r) { b.x = b.r; b.vx = Math.abs(b.vx) * .6; }
+        if (b.x > W - b.r) { b.x = W - b.r; b.vx = -Math.abs(b.vx) * .6; }
+        if (b.y > H - b.r) { b.y = H - b.r; b.vy = -Math.abs(b.vy) * .6; }
+        if (b.y < b.r && b.vy < 0 && b !== ptr.grab) { b.y = b.r; b.vy = Math.abs(b.vy) * .6; }
+      }
+    }
+  }
+  // each bubble is rendered once to an offscreen sprite (glow included); frames only blit them
+  const PAD = 34;
+  function sprite(b, hover){
+    const R = b.r + PAD, c = document.createElement('canvas');
+    c.width = c.height = Math.ceil(R * 2 * dpr);
+    const g = c.getContext('2d'); g.scale(dpr, dpr);
+    const [r, gr, bl] = b.c;
+    g.shadowColor = `rgba(${r},${gr},${bl},${hover ? .75 : .38})`; g.shadowBlur = hover ? 34 : 22;
+    const grd = g.createRadialGradient(R - b.r * .35, R - b.r * .4, b.r * .05, R, R, b.r);
+    grd.addColorStop(0, 'rgba(255,255,255,.95)');
+    grd.addColorStop(.18, `rgba(${r},${gr},${bl},.95)`);
+    grd.addColorStop(.75, `rgba(${r * .45 | 0},${gr * .45 | 0},${bl * .55 | 0},.95)`);
+    grd.addColorStop(1, `rgba(${r * .2 | 0},${gr * .2 | 0},${bl * .3 | 0},.95)`);
+    g.beginPath(); g.arc(R, R, b.r, 0, Math.PI * 2); g.fillStyle = grd; g.fill();
+    g.shadowBlur = 0;
+    g.beginPath(); g.arc(R, R, b.r - .5, 0, Math.PI * 2);
+    g.strokeStyle = 'rgba(255,255,255,.18)'; g.lineWidth = 1; g.stroke();
+    g.fillStyle = '#04121a';
+    g.font = `600 ${Math.max(11, b.r * .3)}px "Space Grotesk", system-ui, sans-serif`;
+    g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(b.s, R, R + 1, b.r * 1.7);
+    return c;
+  }
+  function buildSprites(){ for (const b of balls) { b.img = sprite(b, false); b.imgHi = sprite(b, true); } }
+  function draw(){
+    ctx.clearRect(0, 0, W, H);
+    for (const b of balls) {
+      const hov = Math.hypot(ptr.x - b.x, ptr.y - b.y) < b.r, R = b.r + PAD;
+      ctx.drawImage(hov ? b.imgHi : b.img, b.x - R, b.y - R, R * 2, R * 2);
+    }
+  }
+  let still = 0;
+  function frame(){
+    if (!running) return;
+    step();
+    const moving = ptr.grab || balls.some(b => Math.abs(b.vx) + Math.abs(b.vy) > .03) || ptr.x > -9000;
+    still = moving ? 0 : still + 1;
+    if (still < 2) draw();               // skip redraws once everything has settled
+    requestAnimationFrame(frame);
+  }
+  function local(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  canvas.addEventListener('pointermove', e => { [ptr.x, ptr.y] = local(e); });
+  canvas.addEventListener('pointerleave', () => { ptr.x = ptr.y = -9999; ptr.grab = null; });
+  canvas.addEventListener('pointerdown', e => {
+    [ptr.x, ptr.y] = local(e);
+    ptr.grab = balls.find(b => Math.hypot(ptr.x - b.x, ptr.y - b.y) < b.r) || null;
+    if (ptr.grab) canvas.setPointerCapture(e.pointerId);
+  });
+  canvas.addEventListener('pointerup', () => { ptr.grab = null; });
+  canvas.style.touchAction = 'pan-y';
+
+  const fontsReady = document.fonts ? document.fonts.ready : Promise.resolve();
+  new IntersectionObserver(([en]) => fontsReady.then(() => {
+    if (en.isIntersecting) {
+      if (!started) { started = true; init(); buildSprites(); if (reduce) { for (let i = 0; i < 600; i++) step(); draw(); return; } }
+      if (!reduce && !running) { running = true; frame(); }
+    } else running = false;
+  }), { threshold: .1 }).observe(canvas);
+  addEventListener('resize', () => { if (started) { const old = dpr; size(); if (dpr !== old) buildSprites(); still = 0; draw(); } });
+})();
+</script>
 </body>
 </html>
