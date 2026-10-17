@@ -162,7 +162,7 @@
   .rail a:hover{color:var(--teal); border-color:rgba(94,242,214,.4);}
   .rail svg{width:17px; height:17px;}
   .rail .line{width:1px; height:70px; background:linear-gradient(var(--glass-border-hi), transparent);}
-  @media (max-width:900px){ .rail{display:none;} }
+  @media (max-width:1279px){ .rail{display:none;} }
 
   /* ---------- hero ---------- */
   .hero{
@@ -357,6 +357,8 @@
   /* ---------- sections ---------- */
   section.block{padding:130px 0; position:relative;}
   section.block#about{padding:80px 0;}
+  section.block#services{padding-bottom:20px;}
+  section.block#work{padding-top:30px;}
   #about .title{font-size:clamp(30px,4vw,48px);}
   @media (max-width:640px){ section.block{padding:90px 0;} }
   .eyebrow{
@@ -534,34 +536,62 @@
   @media (max-width:640px){ .sheet .s-body{padding:14px 20px 28px;} }
 
   /* ---------- timeline ---------- */
-  .timeline{position:relative; max-width:940px;}
-  .timeline .rail-line{position:absolute; left:170px; top:6px; bottom:6px; width:1px; background:var(--glass-border);}
+  .timeline{
+    position:relative; max-width:1040px;
+    display:grid; grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr); column-gap:0;
+  }
+  .timeline .rail-line{position:absolute; left:50%; top:6px; bottom:6px; width:1px; background:var(--glass-border);}
   .timeline .rail-fill{
-    position:absolute; left:170px; top:6px; bottom:6px; width:1px;
+    position:absolute; left:50%; top:6px; bottom:6px; width:1px;
     transform-origin:50% 0; transform:scaleY(0); will-change:transform;
     background:linear-gradient(var(--teal), var(--violet));
     box-shadow:0 0 12px var(--teal);
   }
-  .tl-item{display:grid; grid-template-columns:170px 1fr; position:relative; padding-bottom:44px;}
-  .tl-item:last-child{padding-bottom:0;}
-  .tl-when{font-family:var(--display); font-size:24px; font-weight:500; letter-spacing:-.02em; color:var(--muted); padding-right:34px; text-align:right; padding-top:18px; transition:color .5s;}
-  .tl-item.active .tl-when{color:var(--text);}
+  .tl-head{font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); padding-bottom:26px; margin:0; font-weight:400;}
+  .tl-head.edu{grid-column:1; grid-row:1; text-align:right; padding-right:34px;}
+  .tl-head.pro{grid-column:3; grid-row:1; padding-left:34px;}
+  .tl-year{grid-column:2; position:relative; display:flex; flex-direction:column; align-items:center; padding-top:2px;}
   .tl-dot{
-    position:absolute; left:170px; top:28px; width:13px; height:13px; margin-left:-6px; border-radius:50%;
+    width:13px; height:13px; border-radius:50%; position:relative;
     background:var(--bg); border:1px solid var(--faint);
     transition:background .5s, border-color .5s, box-shadow .5s;
   }
-  .tl-item.active .tl-dot{background:var(--teal); border-color:var(--teal); box-shadow:0 0 0 5px rgba(94,242,214,.15), 0 0 20px var(--teal);}
-  .tl-card{margin-left:34px; padding:24px 26px;}
+  .tl-when{
+    font-family:var(--display); font-size:22px; font-weight:500; letter-spacing:-.02em; color:var(--muted);
+    margin-top:6px; padding:2px 0; background:var(--bg); position:relative; transition:color .5s;
+  }
+  .tl-year.active .tl-when{color:var(--text);}
+  .tl-year.active .tl-dot{background:var(--teal); border-color:var(--teal); box-shadow:0 0 0 5px rgba(94,242,214,.15), 0 0 20px var(--teal);}
+  .tl-edu{grid-column:1; padding:0 34px 44px 0; min-width:0;}
+  .tl-pro{grid-column:3; padding:0 0 44px 34px; min-width:0; display:flex; flex-direction:column; gap:12px;}
+  .y26{grid-row:2;} .y25{grid-row:3;} .y24{grid-row:4;}
+  .tl-edu.msc{grid-row:2 / 4;}
+  .tl-edu.beng{grid-row:4;}
+  .tl-card{padding:24px 26px;}
   .tl-card .role{font-family:var(--display); font-size:21px; font-weight:600; letter-spacing:-.015em; margin:0;}
   .tl-card .org{font-family:var(--mono); font-size:12px; letter-spacing:.06em; color:var(--teal); margin:6px 0 10px; text-transform:uppercase;}
   .tl-card p{margin:0; color:var(--muted); font-size:14.5px;}
-  @media (max-width:640px){
-    .timeline .rail-line, .timeline .rail-fill, .tl-dot{left:6px;}
-    .tl-item{grid-template-columns:1fr; padding-left:28px;}
-    .tl-when{text-align:left; padding:0 0 10px; font-size:18px;}
-    .tl-dot{top:6px;}
-    .tl-card{margin-left:0;}
+  .tl-card .tl-more{display:inline-block; margin-top:14px; font-family:var(--mono); font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--teal); text-decoration:none;}
+  .tl-card .tl-more:hover{text-decoration:underline;}
+  .tl-mini{
+    display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+    padding:12px 18px; text-decoration:none; color:var(--text); font-size:14.5px;
+  }
+  .tl-mini span:first-child{min-width:0;}
+  .tl-mini .when{font-family:var(--mono); font-size:11.5px; letter-spacing:.06em; color:var(--faint); white-space:nowrap;}
+  .tl-mini:hover{color:var(--teal);}
+  .work.flash{border-color:var(--teal); box-shadow:0 0 0 1px var(--teal), 0 0 34px rgba(94,242,214,.28);}
+  #works .work{scroll-margin-top:110px;}
+  @media (max-width:760px){
+    .timeline{grid-template-columns:minmax(0,1fr); padding-left:28px;}
+    .timeline .rail-line, .timeline .rail-fill{left:6px;}
+    .tl-head{display:none;}
+    .tl-year, .tl-edu, .tl-pro, .tl-edu.msc, .tl-edu.beng{grid-column:1; grid-row:auto;}
+    .tl-year{flex-direction:row; align-items:center; gap:12px; padding:0 0 12px;}
+    .tl-year .tl-dot{position:absolute; left:-28px; margin-left:0;}
+    .tl-when{margin-top:0; font-size:18px; background:none;}
+    .tl-edu{padding:0 0 14px;}
+    .tl-pro{padding:0 0 34px;}
   }
 
   /* ---------- tech stack ---------- */
@@ -787,46 +817,31 @@
       <div class="timeline" id="timeline">
         <span class="rail-line" aria-hidden="true"></span>
         <span class="rail-fill" aria-hidden="true"></span>
+        <h3 class="tl-head edu">Education</h3>
+        <h3 class="tl-head pro">Projects &amp; experience</h3>
 
-        <div class="tl-item">
-          <div class="tl-when">2026</div>
-          <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-year y26"><span class="tl-dot" aria-hidden="true"></span><div class="tl-when">2026</div></div>
+        <div class="tl-edu msc">
           <div class="tl-card glass spot" data-reveal>
-            <h3 class="role">R&amp;D Intern — 3D Gaussian Splatting for VR</h3>
-            <div class="org">EssilorLuxottica · Jun – Aug 2026</div>
-            <p>Recreated a physical refraction room as an immersive room-scale VR scene: capture, COLMAP calibration, 3DGS training, novel-view evaluation, and Unity integration with VRSplat and OpenXR.</p>
-          </div>
-        </div>
-
-        <div class="tl-item">
-          <div class="tl-when">M.Sc.</div>
-          <span class="tl-dot" aria-hidden="true"></span>
-          <div class="tl-card glass spot" data-reveal>
-            <h3 class="role">Interaction, Graphics &amp; Design</h3>
-            <div class="org">Institut Polytechnique de Paris</div>
+            <h3 class="role">M.Sc. Interaction, Graphics &amp; Design</h3>
+            <div class="org">Institut Polytechnique de Paris · 2025 — present</div>
             <p>Real-time rendering, physically based simulation, geometry processing, mixed reality, and HCI — the home of most projects on this page.</p>
           </div>
         </div>
+        <div class="tl-pro y26" data-year="2026"></div>
 
-        <div class="tl-item">
-          <div class="tl-when">2024</div>
-          <span class="tl-dot" aria-hidden="true"></span>
-          <div class="tl-card glass spot" data-reveal>
-            <h3 class="role">Research — Motor Learning Assessment</h3>
-            <div class="org">Foot-drawn shapes study · Jun – Sep 2024</div>
-            <p>Analysed how practice changes movement quality across seven sessions, reaching 96% shape-specific accuracy in leave-one-subject-out evaluation.</p>
-          </div>
-        </div>
+        <div class="tl-year y25"><span class="tl-dot" aria-hidden="true"></span><div class="tl-when">2025</div></div>
+        <div class="tl-pro y25" data-year="2025"></div>
 
-        <div class="tl-item">
-          <div class="tl-when">B.Eng.</div>
-          <span class="tl-dot" aria-hidden="true"></span>
+        <div class="tl-year y24"><span class="tl-dot" aria-hidden="true"></span><div class="tl-when">2024</div></div>
+        <div class="tl-edu beng y24">
           <div class="tl-card glass spot" data-reveal>
-            <h3 class="role">Computer Engineering — Intelligent Systems</h3>
+            <h3 class="role">B.Eng. Computer Engineering — Intelligent Systems</h3>
             <div class="org">Isfahan University of Technology</div>
             <p>Foundations in algorithms, machine learning, and signal processing.</p>
           </div>
         </div>
+        <div class="tl-pro y24" data-year="2024"></div>
       </div>
     </div>
   </section>
@@ -907,51 +922,51 @@
 
   /* ---------- projects ---------- */
   const projects = [
-    { id:'3dgs-vr', cat:['graphics','xr'], title:'3D Gaussian Splatting for Immersive VR', date:'Jun–Aug 2026', img:'assets/3dgs-vr/essilorluxottica-logo.png', kind:'logo', alt:'EssilorLuxottica', wide:true,
+    { id:'3dgs-vr', year:2026, cat:['graphics','xr'], title:'3D Gaussian Splatting for Immersive VR', date:'Jun–Aug 2026', img:'assets/3dgs-vr/essilorluxottica-logo.png', kind:'logo', alt:'EssilorLuxottica', wide:true,
       short:'R&D internship at EssilorLuxottica: a real refraction room rebuilt as a room-scale VR scene.',
       desc:'An R&D internship project at EssilorLuxottica focused on recreating an existing physical indoor refraction room as an immersive 3D scene for room-scale VR. I developed an end-to-end workflow spanning photographic capture and preprocessing, Structure-from-Motion calibration with COLMAP, 3D Gaussian Splatting training, and held-out novel-view evaluation using image-quality and perceptual metrics. The reconstructed scene was integrated into Unity with VRSplat and OpenXR to evaluate stereoscopic rendering, six-degree-of-freedom navigation, viewpoint consistency, and runtime performance. The study also identified reconstruction limitations around low-texture surfaces, reflections, thin structures, and disocclusions.',
       tags:['3DGS','VRSplat','Unity','COLMAP','OpenXR'], links:[] },
-    { id:'vssm', cat:['graphics'], title:'Variance Soft Shadow Mapping', date:'Mar–Apr 2026', img:'assets/soft-shadows/soft-shadow-loop-card.gif', alt:'Variance soft-shadow methods on a rotating plant scene',
+    { id:'vssm', year:2026, cat:['graphics'], title:'Variance Soft Shadow Mapping', date:'Mar–Apr 2026', img:'assets/soft-shadows/soft-shadow-loop-card.gif', alt:'Variance soft-shadow methods on a rotating plant scene',
       short:'A WebGPU renderer comparing PCF, PCSS, VSM, SAVSM and a hybrid VSSM on thin foliage.',
       desc:'A real-time WebGPU renderer for studying soft-shadow filtering in difficult cases such as thin foliage and contact regions. The project compares percentage-closer filtering (PCF), percentage-closer soft shadows (PCSS), variance shadow maps (VSM), summed-area variance shadow maps (SAVSM), and Variance Soft Shadow Mapping (VSSM) variants. To make VSSM more stable in practice, I added a hybrid mode that combines adaptive subdivision with exact PCF fallback, reducing light leaking and unstable contact shadows.',
       tags:['WebGPU','WGSL','Real-Time Rendering','Shadow Mapping'],
       links:[['Live demo','assets/soft-shadows/demo.html'],['Code','https://github.com/FatemehShirvani/VarianceSoftShadowMapping']] },
-    { id:'plant-growth', cat:['graphics','sim'], title:'Plant Growth Modeling', date:'Feb 2026', img:'assets/plant-growth/plant-growth-loop.gif', alt:'Procedural tree progressing through seasonal changes',
+    { id:'plant-growth', year:2026, cat:['graphics','sim'], title:'Plant Growth Modeling', date:'Feb 2026', img:'assets/plant-growth/plant-growth-loop.gif', alt:'Procedural tree progressing through seasonal changes',
       short:'Procedural tree growth, seasons and wind in real-time C++/OpenGL.',
       desc:'A real-time C++/OpenGL system for procedural tree growth, seasonal behavior, and wind animation. The project combines stochastic L-system branching, staged leaf growth and detachment, alpha-tested foliage shadows, and filtered branch/leaf motion so the tree can move through growth, fall, and winter states without visible popping or unstable leaf transitions.',
       tags:['C++','OpenGL','Procedural Modeling','Real-Time Simulation'],
       links:[['Code','https://github.com/FatemehShirvani/PlantGrowthModeling']] },
-    { id:'sph', cat:['sim'], title:'Smoothed Particle Hydrodynamics', date:'Feb 2026', img:'assets/fluid-simulation/fluid-sph-loop.gif', alt:'Particles flowing around obstacles in a two-dimensional SPH fluid simulation',
+    { id:'sph', year:2026, cat:['sim'], title:'Smoothed Particle Hydrodynamics', date:'Feb 2026', img:'assets/fluid-simulation/fluid-sph-loop.gif', alt:'Particles flowing around obstacles in a two-dimensional SPH fluid simulation',
       short:'A 2D SPH fluid solver for incompressible flow around moving obstacles.',
       desc:'A two-dimensional Smoothed Particle Hydrodynamics simulator for incompressible flow around static and moving obstacles. It combines cubic-spline kernels, uniform-grid neighbor search, density, pressure, and viscosity forces, adaptive CFL-style time stepping, and particle-boundary collision handling, with grid and velocity-field diagnostics for inspecting the simulation.',
       tags:['C++','SPH','Fluid Simulation','Numerical Methods'],
       links:[['Code','https://github.com/FatemehShirvani/FluidSPHSimulation']] },
-    { id:'ski-vr', cat:['xr'], title:'Ski Locomotion in Virtual Reality', date:'Feb 2026', img:'assets/ski-locomotion/ski-locomotion-loop.gif', alt:'First-person virtual-reality skiing with tracked poles and checkpoint targets',
+    { id:'ski-vr', year:2026, cat:['xr'], title:'Ski Locomotion in Virtual Reality', date:'Feb 2026', img:'assets/ski-locomotion/ski-locomotion-loop.gif', alt:'First-person virtual-reality skiing with tracked poles and checkpoint targets',
       short:'Embodied Meta Quest locomotion that turns ski-pole strokes into motion.',
       desc:'An embodied locomotion technique for Meta Quest that turns tracked ski-pole strokes into forward impulses. The Unity implementation combines pole-tip ground contact and controller motion with slope-aware acceleration, steering, braking, friction, and ramp jumps, then evaluates the interaction through timed checkpoint and selection tasks with in-headset performance logging.',
       tags:['Unity','C#','Virtual Reality','Interaction Design'],
       links:[['Code','https://github.com/FatemehShirvani/HCI-for-Mixed-Reality']] },
-    { id:'loop-subdivision', cat:['graphics','sim'], title:'Loop Subdivision Surfaces', date:'Jan 2026', img:'assets/subdivision-surfaces/subdivision-loop.gif', alt:'Loop subdivision smoothing a triangular monkey mesh',
+    { id:'loop-subdivision', year:2026, cat:['graphics','sim'], title:'Loop Subdivision Surfaces', date:'Jan 2026', img:'assets/subdivision-surfaces/subdivision-loop.gif', alt:'Loop subdivision smoothing a triangular monkey mesh',
       short:'Progressive mesh smoothing with Loop subdivision, wireframe inspection and undo.',
       desc:'A C++/OpenGL implementation of Loop subdivision for progressively smoothing triangular meshes. The algorithm builds vertex and edge adjacency, applies valence-dependent masks to original vertices, creates shared odd vertices with interior and boundary rules, and replaces every triangle with four refined faces. Interactive wireframe inspection, bounded subdivision depth, and undo make the topology and convergence behavior easier to examine.',
       tags:['C++','OpenGL','Geometry Processing','Mesh Topology'],
       links:[['Code','https://github.com/FatemehShirvani/LoopSubdivisionSurfaces']] },
-    { id:'rigid-body', cat:['sim'], title:'Multi-Body Rigid Body Simulation', date:'Jan 2026', img:'assets/rigid-body/rigid-body-loop.gif', alt:'Boxes and cylinders colliding in a rigid-body simulation',
+    { id:'rigid-body', year:2026, cat:['sim'], title:'Multi-Body Rigid Body Simulation', date:'Jan 2026', img:'assets/rigid-body/rigid-body-loop.gif', alt:'Boxes and cylinders colliding in a rigid-body simulation',
       short:'Boxes and cylinders under impulses, friction, restitution and sleep states.',
       desc:'A C++ rigid-body simulator for mixed boxes and cylinders under gravity, randomized impulses, and contact constraints. The system integrates linear and angular momentum with body-specific inertia tensors, uses normalized quaternions for stable rotation, and resolves wall and inter-body contacts through impulses, restitution, Coulomb friction, positional correction, damping, and sleep states.',
       tags:['C++','Rigid Body Dynamics','Collision Response','OpenGL'],
       links:[['Code','https://github.com/FatemehShirvani/RigidBodySimulation']] },
-    { id:'wardrobe', cat:['xr'], title:'Interactive Wardrobe Customization', date:'Sep–Oct 2025', img:'assets/purr-and-pattern/overview.png', alt:'Pixel-art character and interactive wardrobe customization interface',
+    { id:'wardrobe', year:2025, cat:['xr'], title:'Interactive Wardrobe Customization', date:'Sep–Oct 2025', img:'assets/purr-and-pattern/overview.png', alt:'Pixel-art character and interactive wardrobe customization interface',
       short:'A playful 2D fashion game exploring direct-manipulation techniques.',
       desc:'An interactive 2D fashion game developed in Unity and C# to explore varied direct-manipulation techniques through a playful wardrobe. Players drag axis-constrained doors and drawers, rearrange hangers, snap garments onto customizable characters, create colors and patterns with matching-color suggestions, and save, import, or export their designs.',
       tags:['Unity','C#','Interaction Design','2D UI'],
       links:[['Code','https://github.com/FatemehShirvani/Interactive-Wardrobe-Customization']] },
-    { id:'twitter', cat:['ml'], title:'Influencer Detection on French Twitter', date:'Dec 2025', img:'assets/twitter-classification/model-results.png', kind:'fit', alt:'Test accuracy comparison across text embeddings, metadata, and hybrid feature sets',
+    { id:'twitter', year:2025, cat:['ml'], title:'Influencer Detection on French Twitter', date:'Dec 2025', img:'assets/twitter-classification/model-results.png', kind:'fit', alt:'Test accuracy comparison across text embeddings, metadata, and hybrid feature sets',
       short:'LoRA-tuned CamemBERT + behavioral features + XGBoost — 85.7% accuracy.',
       desc:'Classified users as influencers or observers from French tweets and profile data. The final pipeline combines LoRA-fine-tuned CamemBERT representations, behavioral features, user-level aggregation, and regularized XGBoost, reaching 85.7% final accuracy.',
       tags:['CamemBERT','LoRA','XGBoost','NLP'],
       links:[['Code','https://github.com/FatemehShirvani/French-Twitter-Influencer-Classification']] },
-    { id:'motor-learning', cat:['ml'], title:'Motor Learning from Foot-Drawn Shapes', date:'Jun–Sep 2024', img:'assets/motor-learning/final-results-table.png', kind:'fit', alt:'Final classification results table for each foot-drawn shape and the pooled dataset',
+    { id:'motor-learning', year:2024, cat:['ml'], title:'Motor Learning from Foot-Drawn Shapes', date:'Jun–Sep 2024', img:'assets/motor-learning/final-results-table.png', kind:'fit', alt:'Final classification results table for each foot-drawn shape and the pooled dataset',
       short:'Kinematic features and LOSO evaluation of practice effects — up to 96% accuracy.',
       desc:'Investigated how practice changes movement quality in a seven-session foot-drawing task. I corrected sampling and quantization artifacts, extracted structural and kinematic features such as SSIM, duration, velocity, curvature, acceleration, jerk, and smoothness, and compared clustering and classification models. In leave-one-subject-out evaluation, shape-specific accuracy reached 96%, the pooled Random Forest reached 79%, and the best early-versus-late session grouping reached 81% on unseen participants.',
       tags:['Python','MATLAB','Motor Learning','Signal Processing','Machine Learning'],
@@ -1006,6 +1021,35 @@
       cards.forEach(c => { const v = !cat || projects[+c.dataset.i].cat.includes(cat); c.hidden = !v; if (v) shown++; });
       countEl.textContent = cat ? shown + ' OF ' + projects.length + ' PROJECTS' : projects.length + ' PROJECTS · 2024 — 2026';
     });
+  });
+
+  /* ---------- career timeline: projects by year ---------- */
+  const careerCards = {
+    '3dgs-vr': ['R&D Intern — 3D Gaussian Splatting for VR', 'EssilorLuxottica · Jun – Aug 2026', 'Recreated a physical refraction room as an immersive room-scale VR scene: capture, COLMAP calibration, 3DGS training, novel-view evaluation, and Unity integration with VRSplat and OpenXR.'],
+    'motor-learning': ['Research — Motor Learning Assessment', 'Foot-drawn shapes study · Jun – Sep 2024', 'Analysed how practice changes movement quality across seven sessions, reaching 96% shape-specific accuracy in leave-one-subject-out evaluation.']
+  };
+  document.querySelectorAll('.tl-pro[data-year]').forEach(col => {
+    const ps = projects.filter(p => String(p.year) === col.dataset.year);
+    const full = ps.filter(p => careerCards[p.id]), mini = ps.filter(p => !careerCards[p.id]);
+    col.innerHTML = full.map(p => {
+      const [role, org, txt] = careerCards[p.id];
+      return `<div class="tl-card glass spot" data-reveal><h3 class="role">${role.replace('&', '&amp;')}</h3><div class="org">${org}</div><p>${txt}</p><a class="tl-more" href="#p-${p.id}">View project →</a></div>`;
+    }).join('') + mini.map(p =>
+      `<a class="tl-mini glass spot" data-reveal href="#p-${p.id}"><span>${esc(p.title)}</span><span class="when">${p.date}</span></a>`).join('');
+  });
+  document.getElementById('timeline').addEventListener('click', e => {
+    const a = e.target.closest('a[href^="#p-"]'); if (!a) return;
+    e.preventDefault();
+    const card = document.getElementById(a.getAttribute('href').slice(1)); if (!card) return;
+    if (card.hidden) {
+      areas.forEach(x => x.setAttribute('aria-pressed', 'false'));
+      cards.forEach(c => { c.hidden = false; });
+      countEl.textContent = projects.length + ' PROJECTS · 2024 — 2026';
+    }
+    card.classList.add('in');
+    card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    card.classList.add('flash');
+    setTimeout(() => card.classList.remove('flash'), 1800);
   });
 
   const sheet = document.getElementById('sheet');
@@ -1090,7 +1134,7 @@
   const sections = links.map(a => document.querySelector(a.getAttribute('href')));
   const tl = document.getElementById('timeline');
   const fill = tl.querySelector('.rail-fill');
-  const tlItems = [...tl.querySelectorAll('.tl-item')];
+  const tlItems = [...tl.querySelectorAll('.tl-year')];
 
   // cached layout, refreshed only on resize / load
   let docMax = 1, secTops = [], tlTop = 0, tlH = 0, itemOffs = [], aboutTop = 0, aboutH = 0;
@@ -1122,7 +1166,7 @@
     const mark = vh * .6, rel = mark - (tlTop - y);
     fill.style.transform = `scaleY(${Math.max(0, Math.min(tlH - 12, rel)) / Math.max(1, tlH - 12)})`;
     itemOffs.forEach((off, i) => {
-      const on = off + 28 < rel;
+      const on = off + 8 < rel;
       if (on !== tlState[i]) { tlState[i] = on; tlItems[i].classList.toggle('active', on); }
     });
 
