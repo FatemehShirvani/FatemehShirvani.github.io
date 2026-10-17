@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fatemeh Shirvani — CV</title>
+<!-- Source of assets/Fatemeh-Shirvani-CV.pdf. Rebuild with:
+     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --no-pdf-header-footer \
+       --print-to-pdf=assets/Fatemeh-Shirvani-CV.pdf assets/cv-source.html -->
+<style>
+  @page{size:A4; margin:11mm 14mm;}
+  *{box-sizing:border-box;}
+  body{margin:0; font-family:"Helvetica Neue", Helvetica, Arial, sans-serif; font-size:9.2pt; line-height:1.38; color:#1b2129;}
+  a{color:inherit; text-decoration:none;}
+  header{display:flex; justify-content:space-between; align-items:flex-end; gap:16px; padding-bottom:9px; border-bottom:2px solid #0f9b85;}
+  h1{font-size:23pt; letter-spacing:-.02em; margin:0; line-height:1;}
+  .role{margin:5px 0 0; color:#4a5563; font-size:10.5pt;}
+  .contact{text-align:right; font-size:9pt; color:#3a4450; line-height:1.5; white-space:nowrap;}
+  h2{font-size:10pt; text-transform:uppercase; letter-spacing:.12em; color:#0f9b85; margin:11px 0 5px;}
+  .item{margin-bottom:6px; break-inside:avoid;}
+  .row{display:flex; justify-content:space-between; gap:12px; align-items:baseline;}
+  .row b{font-size:10.2pt;}
+  .when{color:#6b7480; font-size:9pt; white-space:nowrap;}
+  .org{color:#4a5563; font-style:italic;}
+  p, ul{margin:2px 0 0;}
+  ul{padding-left:15px;}
+  li{margin:1px 0;}
+  .tags{color:#6b7480; font-size:8.6pt;}
+  .proj{display:grid; grid-template-columns:1fr 1fr; gap:5px 18px;}
+  .proj .item{margin:0;}
+  .skills{display:grid; grid-template-columns:180px 1fr; gap:3px 10px;}
+  .skills b{font-weight:600;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Fatemeh Shirvani</h1>
+    <p class="role">M.Sc. student — Interaction, Graphics &amp; Design · Real-time rendering, simulation, XR, machine learning</p>
+  </div>
+  <div class="contact">
+    <a href="mailto:ftm.shirvani@gmail.com">ftm.shirvani@gmail.com</a><br>
+    <a href="https://www.linkedin.com/in/fatemeh--shirvani">linkedin.com/in/fatemeh--shirvani</a><br>
+    <a href="https://github.com/FatemehShirvani">github.com/FatemehShirvani</a><br>
+    <a href="https://fatemehshirvani.github.io">fatemehshirvani.github.io</a> · Paris, France
+  </div>
+</header>
+
+<h2>Education</h2>
+<div class="item">
+  <div class="row"><b>M.Sc. Interaction, Graphics &amp; Design</b><span class="when">2025 — present</span></div>
+  <div class="org">Institut Polytechnique de Paris</div>
+  <p>Real-time rendering, physically based simulation, geometry processing, mixed reality and HCI.</p>
+</div>
+<div class="item">
+  <div class="row"><b>B.Eng. Computer Engineering — Intelligent Systems</b></div>
+  <div class="org">Isfahan University of Technology</div>
+  <p>Foundations in algorithms, machine learning and signal processing.</p>
+</div>
+
+<h2>Experience</h2>
+<div class="item">
+  <div class="row"><b>R&amp;D Intern — 3D Gaussian Splatting for Immersive VR</b><span class="when">Jun — Aug 2026</span></div>
+  <div class="org">EssilorLuxottica</div>
+  <ul>
+    <li>Recreated a physical refraction room as a room-scale VR scene: photographic capture and preprocessing, Structure-from-Motion calibration with COLMAP, and 3D Gaussian Splatting training.</li>
+    <li>Evaluated held-out novel views with image-quality and perceptual metrics; integrated the scene in Unity with VRSplat and OpenXR to test stereo rendering, 6-DoF navigation and runtime performance.</li>
+    <li>Identified reconstruction limits around low-texture surfaces, reflections, thin structures and disocclusions.</li>
+  </ul>
+  <p class="tags">3DGS · VRSplat · Unity · COLMAP · OpenXR</p>
+</div>
+<div class="item">
+  <div class="row"><b>Research — Motor Learning from Foot-Drawn Shapes</b><span class="when">Jun — Sep 2024</span></div>
+  <ul>
+    <li>Studied how practice changes movement quality over a seven-session foot-drawing task; corrected sampling and quantization artifacts.</li>
+    <li>Extracted structural and kinematic features (SSIM, duration, velocity, curvature, jerk, smoothness) and compared clustering and classification models.</li>
+    <li>Leave-one-subject-out evaluation: 96% shape-specific accuracy, 79% pooled Random Forest, 81% early-vs-late session grouping on unseen participants.</li>
+  </ul>
+  <p class="tags">Python · MATLAB · Signal Processing · Machine Learning</p>
+</div>
+
+<h2>Selected projects</h2>
+<div class="proj">
+  <div class="item">
+    <div class="row"><b>Variance Soft Shadow Mapping</b><span class="when">2026</span></div>
+    <p>WebGPU renderer comparing PCF, PCSS, VSM, SAVSM and a hybrid VSSM on thin foliage.</p>
+    <p class="tags">WebGPU · WGSL</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Plant Growth Modeling</b><span class="when">2026</span></div>
+    <p>Procedural tree growth, seasons and wind in real-time C++/OpenGL with L-systems.</p>
+    <p class="tags">C++ · OpenGL</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Smoothed Particle Hydrodynamics</b><span class="when">2026</span></div>
+    <p>2D SPH solver for incompressible flow around moving obstacles.</p>
+    <p class="tags">C++ · Numerical Methods</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Ski Locomotion in Virtual Reality</b><span class="when">2026</span></div>
+    <p>Embodied Meta Quest locomotion that turns ski-pole strokes into motion, evaluated with timed tasks.</p>
+    <p class="tags">Unity · C# · Meta Quest</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Loop Subdivision Surfaces</b><span class="when">2026</span></div>
+    <p>Progressive mesh smoothing with interior/boundary rules, wireframe inspection and undo.</p>
+    <p class="tags">C++ · OpenGL · Geometry Processing</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Multi-Body Rigid Body Simulation</b><span class="when">2026</span></div>
+    <p>Boxes and cylinders under impulses, Coulomb friction, restitution and sleep states.</p>
+    <p class="tags">C++ · Rigid Body Dynamics</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Influencer Detection on French Twitter</b><span class="when">2025</span></div>
+    <p>LoRA-tuned CamemBERT + behavioral features + XGBoost — 85.7% accuracy.</p>
+    <p class="tags">CamemBERT · LoRA · XGBoost · NLP</p>
+  </div>
+  <div class="item">
+    <div class="row"><b>Interactive Wardrobe Customization</b><span class="when">2025</span></div>
+    <p>Playful 2D fashion game exploring direct-manipulation techniques.</p>
+    <p class="tags">Unity · C# · Interaction Design</p>
+  </div>
+</div>
+
+<h2>Skills</h2>
+<div class="skills">
+  <b>Graphics &amp; Rendering</b><span>C++, OpenGL, WebGPU, GLSL / WGSL, 3D Gaussian Splatting, COLMAP</span>
+  <b>XR &amp; Interaction</b><span>Unity, C#, OpenXR, Meta Quest, React</span>
+  <b>Machine Learning &amp; Data</b><span>Python, PyTorch, scikit-learn, XGBoost, OpenCV, NumPy, MATLAB</span>
+  <b>Tools</b><span>LaTeX</span>
+</div>
+
+</body>
+</html>
