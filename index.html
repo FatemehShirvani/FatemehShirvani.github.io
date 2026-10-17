@@ -130,6 +130,13 @@
     transition:color .3s;
   }
   .nav a.link:hover, .nav a.link.active{color:var(--text);}
+  .nav a.cv{
+    position:relative; z-index:1; margin-left:2px;
+    font-family:var(--mono); font-size:12px; letter-spacing:.06em; text-transform:uppercase;
+    padding:8px 15px; border-radius:999px; color:var(--teal);
+    border:1px solid rgba(94,242,214,.4); transition:background .3s, color .3s;
+  }
+  .nav a.cv:hover{background:rgba(94,242,214,.12); color:var(--text);}
   .nav .pill{
     position:absolute; z-index:0; top:6px; height:calc(100% - 12px); left:0; width:0;
     border-radius:999px; background:rgba(255,255,255,.08);
@@ -139,6 +146,7 @@
   @media (max-width:640px){
     .nav{top:12px; width:calc(100% - 24px); justify-content:space-between;}
     .nav a.link{padding:8px 9px; font-size:10.5px; letter-spacing:.03em;}
+    .nav a.cv{padding:7px 10px; font-size:10.5px; letter-spacing:.03em;}
   }
 
   /* ---------- side rail ---------- */
@@ -160,10 +168,10 @@
   .hero{
     min-height:100svh; position:relative;
     display:grid; align-items:center;
-    padding:120px 0 80px;
+    padding:120px 0 80px; overflow-x:clip;
   }
-  .hero-grid{display:grid; grid-template-columns:1.25fr .9fr; gap:40px; align-items:center;}
-  @media (max-width:900px){ .hero-grid{grid-template-columns:1fr;} }
+  .hero-grid{position:relative; display:grid; grid-template-columns:1fr; justify-items:center; text-align:center;}
+  .hero-copy{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;}
 
   .kicker{
     display:inline-flex; align-items:center; gap:10px;
@@ -182,7 +190,7 @@
   .hello{font-family:var(--mono); color:var(--teal); font-size:14px; margin:34px 0 6px; letter-spacing:.06em;}
   h1.name{
     font-family:var(--display); font-weight:700;
-    font-size:clamp(52px, 10vw, 132px);
+    font-size:clamp(40px, 6.5vw, 84px);
     line-height:.9; letter-spacing:-.045em; margin:0;
   }
   h1.name .line{display:block; overflow:hidden; padding-bottom:.06em;}
@@ -199,7 +207,7 @@
   @keyframes rise{to{transform:none; opacity:1;}}
 
   .roles{
-    margin:28px 0 0; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;
+    margin:28px 0 0; display:flex; justify-content:center; align-items:baseline; gap:12px; flex-wrap:wrap;
     font-family:var(--display); font-size:clamp(20px, 2.4vw, 28px); font-weight:500; color:var(--muted);
   }
   .roles .swap{position:relative; display:inline-grid; color:var(--text); min-width:12ch;}
@@ -211,10 +219,10 @@
   .roles .swap span.on{opacity:1; transform:none;}
   .roles .swap span.off{opacity:0; transform:translateY(-60%);}
 
-  .lede{max-width:54ch; color:var(--muted); font-size:16.5px; margin:24px 0 36px;}
+  .lede{max-width:54ch; color:var(--muted); font-size:16.5px; margin:24px auto 36px;}
   .lede strong{color:var(--text); font-weight:500;}
 
-  .cta{display:flex; gap:14px; flex-wrap:wrap;}
+  .cta{display:flex; gap:14px; flex-wrap:wrap; justify-content:center;}
   .btn{
     position:relative; display:inline-flex; align-items:center; gap:10px;
     padding:14px 22px; border-radius:999px;
@@ -240,11 +248,15 @@
   .btn:hover .arrow{transform:translateX(4px);}
 
   /* hero orb */
-  .orb-stage{position:relative; aspect-ratio:1; width:min(100%, 460px); justify-self:center; perspective:900px;}
+  .orb-stage{
+    position:absolute; z-index:0; left:50%; top:50%; translate:-50% -50%;
+    aspect-ratio:1; width:min(92vw, 640px); perspective:900px; pointer-events:none;
+  }
   .orb{
     position:absolute; inset:8%; border-radius:50%;
     transform-style:preserve-3d;
     transform:rotateX(var(--ox,0deg)) rotateY(var(--oy,0deg));
+    opacity:.55;
     transition:transform .8s var(--ease);
   }
   .orb .core{
@@ -295,12 +307,20 @@
     white-space:nowrap;
   }
   .chip i{font-style:normal; color:var(--teal); margin-right:6px;}
-  .chip.c1{top:8%; left:-6%;}
-  .chip.c2{top:44%; right:-8%; animation-delay:-2s;}
-  .chip.c3{bottom:8%; left:6%; animation-delay:-4s;}
+  .chip.c1{top:2%; left:-4%;}
+  .chip.c2{top:46%; right:-14%; animation-delay:-2s;}
+  .chip.c3{bottom:2%; left:2%; animation-delay:-4s;}
   .chip.c2 i{color:var(--violet);} .chip.c3 i{color:var(--pink);}
   @keyframes float{0%,100%{transform:translateY(0);} 50%{transform:translateY(-12px);}}
-  @media (max-width:900px){ .orb-stage{width:min(80%, 360px); order:-1; margin-top:20px;} .chip.c1{left:0;} .chip.c2{right:0;} }
+  @media (max-width:900px){
+    .hero{padding-bottom:140px;}
+    .orb-stage{inset:0; left:0; top:0; translate:none; width:auto; aspect-ratio:auto;}
+    .orb{inset:auto; left:50%; top:50%; width:min(92vw, 400px); aspect-ratio:1; translate:-50% -50%;}
+    .chip{font-size:10px; padding:6px 10px;}
+    .chip.c1{top:-56px; left:2px; bottom:auto;}
+    .chip.c2{top:-56px; right:2px; left:auto;}
+    .chip.c3{bottom:-50px; left:50%; margin-left:-62px; top:auto;}
+  }
 
   .scroll-hint{
     position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
@@ -599,11 +619,18 @@
   <a class="link" href="#work">Work</a>
   <a class="link" href="#experience">Career</a>
   <a class="link" href="#contact">Contact</a>
+  <a class="cv" href="assets/Fatemeh-Shirvani-CV.pdf" download>CV</a>
 </nav>
 
 <aside class="rail" aria-label="Social links">
   <a href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" aria-label="GitHub" data-magnetic>
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+  </a>
+  <a href="https://www.linkedin.com/in/fatemeh--shirvani" target="_blank" rel="noopener" aria-label="LinkedIn" data-magnetic>
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
+  </a>
+  <a href="mailto:ftm.shirvani@gmail.com" aria-label="Email" data-magnetic>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 7 8.5 6.5L20.5 7"/></svg>
   </a>
   <span class="line" aria-hidden="true"></span>
 </aside>
@@ -613,7 +640,7 @@
   <!-- ================= HERO ================= -->
   <section class="hero">
     <div class="wrap hero-grid">
-      <div>
+      <div class="hero-copy">
         <span class="kicker"><span class="live" aria-hidden="true"></span>M.Sc. · Institut Polytechnique de Paris</span>
         <p class="hello">Hello! I'm</p>
         <h1 class="name" aria-label="Fatemeh Shirvani">
@@ -634,7 +661,8 @@
           projects that sit between how something looks and how someone uses it.
         </p>
         <div class="cta">
-          <a class="btn primary" href="#work" data-magnetic>See work <span class="arrow">→</span></a>
+          <a class="btn primary" href="assets/Fatemeh-Shirvani-CV.pdf" download data-magnetic>Download CV</a>
+          <a class="btn" href="#work" data-magnetic>See work <span class="arrow">→</span></a>
           <a class="btn" href="#contact" data-magnetic>Get in touch</a>
         </div>
       </div>
