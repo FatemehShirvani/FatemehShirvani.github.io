@@ -629,11 +629,13 @@
   @keyframes sheen{to{background-position:-200% 0;}}
   .contact .lede{margin:0 auto 40px;}
   .contact .cta{justify-content:center;}
-  .contact-cards{display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; margin-top:80px; text-align:left;}
-  @media (max-width:760px){ .contact-cards{grid-template-columns:1fr;} }
+  .contact-cards{display:grid; grid-template-columns:repeat(6, minmax(0, 1fr)); gap:16px; margin-top:80px; text-align:left;}
+  .contact-cards > *{grid-column:span 2; min-width:0;}
+  .contact-cards > :nth-child(n+4){grid-column:span 3;}
+  @media (max-width:760px){ .contact-cards > *, .contact-cards > :nth-child(n+4){grid-column:1 / -1;} }
   .c-card{padding:24px 24px; display:flex; flex-direction:column; gap:6px;}
   .c-card .k{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint);}
-  .c-card .v{font-family:var(--display); font-size:19px; font-weight:500;}
+  .c-card .v{font-family:var(--display); font-size:19px; font-weight:500; overflow-wrap:anywhere;}
   a.c-card .v::after{content:" ↗"; color:var(--teal); display:inline-block; transition:transform .4s var(--ease);}
   a.c-card:hover .v::after{transform:translate(3px,-3px);}
 
@@ -864,9 +866,9 @@
         <h2 class="title">My <em>tech stack.</em></h2>
         <p class="section-sub">Graphics &amp; rendering, XR &amp; interaction, machine learning &amp; data, and tools. Go ahead — push them around.</p>
       </div>
+      <div class="legend" id="stack-legend" role="group" aria-label="Filter the tech stack by group" data-reveal></div>
       <div class="stack-stage glass" data-reveal>
         <div class="big" aria-hidden="true">STACK</div>
-      <div class="legend" id="stack-legend" role="group" aria-label="Filter the tech stack by group" data-reveal></div>
         <canvas id="stack-canvas" aria-label="Interactive bubbles grouped by area. Graphics and rendering: C++, OpenGL, WebGPU, GLSL / WGSL, COLMAP. XR and interaction: Unity, C#, React. Machine learning and data: Python, PyTorch, scikit-learn, OpenCV, NumPy, MATLAB. Tools: LaTeX" role="img"></canvas>
         <span class="hint">Drag the bubbles · pick a group</span>
       </div>
@@ -902,13 +904,22 @@
       <h2 data-reveal>Let's build<br><span>something.</span></h2>
       <p class="lede" data-reveal>Open to research and engineering roles in graphics, XR and interactive systems.</p>
       <div class="cta" data-reveal>
-        <a class="btn primary" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-magnetic>GitHub <span class="arrow">↗</span></a>
+        <a class="btn primary" href="mailto:ftm.shirvani@gmail.com" data-magnetic>Email me <span class="arrow">↗</span></a>
+        <a class="btn" href="https://www.linkedin.com/in/fatemeh--shirvani" target="_blank" rel="noopener" data-magnetic>LinkedIn <span class="arrow">↗</span></a>
+        <a class="btn" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-magnetic>GitHub <span class="arrow">↗</span></a>
+        <a class="btn" href="assets/Fatemeh-Shirvani-CV.pdf" download data-magnetic>Download CV <span class="arrow">↓</span></a>
       </div>
       <div class="contact-cards">
-        <a class="c-card glass spot" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-reveal style="--d:0s">
+        <a class="c-card glass spot" href="mailto:ftm.shirvani@gmail.com" data-reveal style="--d:0s">
+          <span class="k">Email</span><span class="v">ftm.shirvani@gmail.com</span>
+        </a>
+        <a class="c-card glass spot" href="https://www.linkedin.com/in/fatemeh--shirvani" target="_blank" rel="noopener" data-reveal style="--d:.05s">
+          <span class="k">LinkedIn</span><span class="v">in/fatemeh--shirvani</span>
+        </a>
+        <a class="c-card glass spot" href="https://github.com/FatemehShirvani" target="_blank" rel="noopener" data-reveal style="--d:.1s">
           <span class="k">Code</span><span class="v">github.com/FatemehShirvani</span>
         </a>
-        <div class="c-card glass spot" data-reveal style="--d:.1s">
+        <div class="c-card glass spot" data-reveal style="--d:.15s">
           <span class="k">Based in</span><span class="v">Paris, France</span>
         </div>
         <div class="c-card glass spot" data-reveal style="--d:.2s">
@@ -1289,6 +1300,10 @@
     W = r.width; H = r.height;
     canvas.width = W * dpr; canvas.height = H * dpr;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // one anchor per group: a row on wide screens, 2x2 on narrow ones (ly = where the label sits)
+    anchors = W >= 640
+      ? groups.map((g, i) => ({ x: W * (i * 2 + 1) / 8, y: H * .55, ly: 30 }))
+      : groups.map((g, i) => ({ x: W * (i % 2 ? .75 : .25), y: H * (i < 2 ? .3 : .74), ly: i < 2 ? 22 : H * .5 + 14 }));
   }
   function init(){
     size();
@@ -1299,10 +1314,6 @@
     });
   }
   function step(){
-    // one anchor per group: a row on wide screens, 2x2 on narrow ones (ly = where the label sits)
-    anchors = W >= 640
-      ? groups.map((g, i) => ({ x: W * (i * 2 + 1) / 8, y: H * .55, ly: 30 }))
-      : groups.map((g, i) => ({ x: W * (i % 2 ? .75 : .25), y: H * (i < 2 ? .3 : .74), ly: i < 2 ? 22 : H * .5 + 14 }));
     for (const b of balls) {
       if (b === ptr.grab) { b.vx = (ptr.x - b.x) * .35; b.vy = (ptr.y - b.y) * .35; }
       else {
@@ -1358,17 +1369,6 @@
   function buildSprites(){ for (const b of balls) { b.img = sprite(b, false); b.imgHi = sprite(b, true); } }
   function draw(){
     ctx.clearRect(0, 0, W, H);
-    for (const b of balls) {
-      const hov = Math.hypot(ptr.x - b.x, ptr.y - b.y) < b.r, R = b.r + PAD;
-      ctx.drawImage(hov ? b.imgHi : b.img, b.x - R, b.y - R, R * 2, R * 2);
-    }
-  }
-  let still = 0;
-  function frame(){
-    if (!running) return;
-    step();
-    const moving = ptr.grab || balls.some(b => Math.abs(b.vx) + Math.abs(b.vy) > .03) || ptr.x > -9000;
-    still = moving ? 0 : still + 1;
     ctx.font = '500 11px "JetBrains Mono", ui-monospace, monospace';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     groups.forEach((g, gi) => {
@@ -1376,12 +1376,23 @@
       ctx.fillStyle = `rgb(${g.c})`;
       ctx.fillText(g.name.toUpperCase(), anchors[gi].x, anchors[gi].ly, W / (W >= 640 ? 4 : 2) - 12);
     });
-    if (still < 2) draw();               // skip redraws once everything has settled
+    for (const b of balls) {
       ctx.globalAlpha = active < 0 || active === b.gi ? 1 : .18;
+      const hov = Math.hypot(ptr.x - b.x, ptr.y - b.y) < b.r, R = b.r + PAD;
+      ctx.drawImage(hov ? b.imgHi : b.img, b.x - R, b.y - R, R * 2, R * 2);
+    }
+    ctx.globalAlpha = 1;
+  }
+  let still = 0;
+  function frame(){
+    if (!running) return;
+    step();
+    const moving = ptr.grab || balls.some(b => Math.abs(b.vx) + Math.abs(b.vy) > .03) || ptr.x > -9000;
+    still = moving ? 0 : still + 1;
+    if (still < 2) draw();               // skip redraws once everything has settled
     requestAnimationFrame(frame);
   }
   function local(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
-    ctx.globalAlpha = 1;
   canvas.addEventListener('pointermove', e => { [ptr.x, ptr.y] = local(e); });
   canvas.addEventListener('pointerleave', () => { ptr.x = ptr.y = -9999; ptr.grab = null; });
   canvas.addEventListener('pointerdown', e => {
