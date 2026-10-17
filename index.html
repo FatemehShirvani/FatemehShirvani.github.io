@@ -356,6 +356,8 @@
 
   /* ---------- sections ---------- */
   section.block{padding:130px 0; position:relative;}
+  section.block#about{padding:80px 0;}
+  #about .title{font-size:clamp(30px,4vw,48px);}
   @media (max-width:640px){ section.block{padding:90px 0;} }
   .eyebrow{
     font-family:var(--mono); font-size:12px; letter-spacing:.18em; text-transform:uppercase;
@@ -412,10 +414,10 @@
   .about-text .w.lit{color:var(--text);}
   .stats{display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:40px;}
   .stat{padding:22px 20px;}
-  .stat b{display:block; font-family:var(--display); font-size:38px; font-weight:600; letter-spacing:-.03em; line-height:1;}
+  .stat b{display:block; font-family:var(--display); font-size:clamp(22px,2.4vw,28px); font-weight:600; letter-spacing:-.02em; line-height:1.1;}
   .stat b sup{font-size:.5em; color:var(--teal); margin-left:2px;}
   .stat span{display:block; margin-top:8px; font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted);}
-  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} .stat b{font-size:30px;} }
+  @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} .stat:last-child{grid-column:1 / -1;} }
 
   /* ---------- what I do ---------- */
   .services{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px;}
@@ -615,9 +617,9 @@
 <nav class="nav" aria-label="Main">
   <a class="logo" href="#top" aria-label="Back to top">FS</a>
   <span class="pill" aria-hidden="true"></span>
-  <a class="link" href="#about">About</a>
   <a class="link" href="#work">Work</a>
   <a class="link" href="#experience">Career</a>
+  <a class="link" href="#about">About</a>
   <a class="link" href="#contact">Contact</a>
   <a class="cv" href="assets/Fatemeh-Shirvani-CV.pdf" download>CV</a>
 </nav>
@@ -693,31 +695,8 @@
     </div>
   </div>
 
-  <!-- ================= ABOUT ================= -->
-  <section class="block" id="about">
-    <div class="wrap about-grid">
-      <div data-reveal>
-        <p class="eyebrow">About me</p>
-        <h2 class="title">Where pixels<br>meet <em>people.</em></h2>
-      </div>
-      <div>
-        <p class="about-text" data-words>
-          I'm a Master's student in Interaction, Graphics &amp; Design at Institut Polytechnique de Paris,
-          with a background in Intelligent Systems from Isfahan University of Technology. I like projects
-          that sit between how something looks and how someone uses it — real-time rendering, simulation,
-          and the machine learning that quietly powers both.
-        </p>
-        <div class="stats">
-          <div class="stat glass spot" data-reveal style="--d:.05s"><b data-count="10">0</b><span>Projects</span></div>
-          <div class="stat glass spot" data-reveal style="--d:.15s"><b data-count="96" data-suffix="%">0</b><span>Top accuracy</span></div>
-          <div class="stat glass spot" data-reveal style="--d:.25s"><b data-count="6" data-suffix="DoF">0</b><span>VR navigation</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ================= WHAT I DO ================= -->
-  <section class="block" id="services" style="padding-top:20px">
+  <section class="block" id="services">
     <div class="wrap">
       <div data-reveal>
         <p class="eyebrow">What I do</p>
@@ -856,6 +835,28 @@
         <div class="big" aria-hidden="true">STACK</div>
         <canvas id="stack-canvas" aria-label="Interactive bubbles showing: C++, Python, OpenGL, WebGPU, GLSL / WGSL, PyTorch, scikit-learn, OpenCV, NumPy, React, LaTeX, Unity, C#, COLMAP, MATLAB" role="img"></canvas>
         <span class="hint">Move · drag · fling</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ABOUT ================= -->
+  <section class="block" id="about">
+    <div class="wrap about-grid">
+      <div data-reveal>
+        <p class="eyebrow">About me</p>
+        <h2 class="title">Where pixels<br>meet <em>people.</em></h2>
+      </div>
+      <div>
+        <p class="about-text" data-words>
+          Master's student in Interaction, Graphics &amp; Design at Institut Polytechnique de Paris, with a
+          B.Eng. in Intelligent Systems from Isfahan University of Technology. I build things that sit
+          between how something looks and how someone uses it.
+        </p>
+        <div class="stats">
+          <div class="stat glass spot" data-reveal style="--d:.05s"><b>Paris</b><span>Based in</span></div>
+          <div class="stat glass spot" data-reveal style="--d:.15s"><b>M.Sc.</b><span>Institut Polytechnique de Paris</span></div>
+          <div class="stat glass spot" data-reveal style="--d:.25s"><b>R&amp;D Intern</b><span>EssilorLuxottica · 2026</span></div>
+        </div>
       </div>
     </div>
   </section>
