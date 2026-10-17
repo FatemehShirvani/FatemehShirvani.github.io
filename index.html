@@ -595,9 +595,19 @@
   }
 
   /* ---------- tech stack ---------- */
-  .stack-stage{position:relative; height:clamp(420px, 60vh, 600px); overflow:hidden; padding:0;}
+  .stack-stage{position:relative; height:clamp(360px, 50vh, 520px); overflow:hidden; padding:0;}
   .stack-stage canvas{position:absolute; inset:0; width:100%; height:100%;}
   .stack-stage .hint{position:absolute; left:24px; bottom:20px; font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); pointer-events:none;}
+  .legend{display:flex; flex-wrap:wrap; gap:10px; margin:0 0 16px;}
+  .legend button{
+    display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.05em; color:var(--muted, #9ca3af);
+    padding:8px 14px; border-radius:999px; background:rgba(255,255,255,.04); border:1px solid var(--glass-border);
+    transition:color .3s, border-color .3s, background .3s;
+  }
+  .legend button i{width:9px; height:9px; border-radius:50%; background:rgb(var(--c)); box-shadow:0 0 10px rgba(var(--c),.6);}
+  .legend button:hover{color:#fff; border-color:rgba(var(--c),.5);}
+  .legend button[aria-pressed="true"]{color:#fff; border-color:rgba(var(--c),.8); background:rgba(var(--c),.14);}
   .stack-stage .big{
     position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
     font-family:var(--display); font-weight:700; letter-spacing:-.05em; font-size:clamp(60px, 13vw, 180px);
@@ -852,12 +862,13 @@
       <div data-reveal>
         <p class="eyebrow">Toolkit</p>
         <h2 class="title">My <em>tech stack.</em></h2>
-        <p class="section-sub">Languages, frameworks and tools I reach for. Go ahead — push them around.</p>
+        <p class="section-sub">Graphics &amp; rendering, XR &amp; interaction, machine learning &amp; data, and tools. Go ahead — push them around.</p>
       </div>
       <div class="stack-stage glass" data-reveal>
         <div class="big" aria-hidden="true">STACK</div>
-        <canvas id="stack-canvas" aria-label="Interactive bubbles showing: C++, Python, OpenGL, WebGPU, GLSL / WGSL, PyTorch, scikit-learn, OpenCV, NumPy, React, LaTeX, Unity, C#, COLMAP, MATLAB" role="img"></canvas>
-        <span class="hint">Move · drag · fling</span>
+      <div class="legend" id="stack-legend" role="group" aria-label="Filter the tech stack by group" data-reveal></div>
+        <canvas id="stack-canvas" aria-label="Interactive bubbles grouped by area. Graphics and rendering: C++, OpenGL, WebGPU, GLSL / WGSL, COLMAP. XR and interaction: Unity, C#, React. Machine learning and data: Python, PyTorch, scikit-learn, OpenCV, NumPy, MATLAB. Tools: LaTeX" role="img"></canvas>
+        <span class="hint">Drag the bubbles · pick a group</span>
       </div>
     </div>
   </section>
@@ -1249,8 +1260,26 @@
   /* ---------- tech stack bubbles ---------- */
   const canvas = document.getElementById("stack-canvas");
   const ctx = canvas.getContext('2d');
-  const skills = ['C++','Python','OpenGL','WebGPU','GLSL / WGSL','PyTorch','scikit-learn','OpenCV','NumPy','React','LaTeX','Unity','C#','COLMAP','MATLAB'];
-  const hues = [[94,242,214],[167,139,250],[240,171,252],[56,189,248],[52,211,153],[129,140,248]];
+  const groups = [
+    { name:'Graphics & Rendering', c:[94,242,214], skills:['C++','OpenGL','WebGPU','GLSL / WGSL','COLMAP'] },
+    { name:'XR & Interaction', c:[167,139,250], skills:['Unity','C#','React'] },
+    { name:'Machine Learning & Data', c:[56,189,248], skills:['Python','PyTorch','scikit-learn','OpenCV','NumPy','MATLAB'] },
+    { name:'Tools', c:[240,171,252], skills:['LaTeX'] }
+  ];
+  const skills = groups.flatMap((g, gi) => g.skills.map(s => ({ s, gi })));
+  let active = -1, anchors = [];
+  const legend = document.getElementById('stack-legend');
+  groups.forEach((g, gi) => {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.setAttribute('aria-pressed', 'false'); btn.style.setProperty('--c', g.c.join(','));
+    btn.innerHTML = '<i></i>' + g.name.replace('&', '&amp;');
+    btn.addEventListener('click', () => {
+      active = active === gi ? -1 : gi;
+      legend.querySelectorAll('button').forEach((x, k) => x.setAttribute('aria-pressed', String(k === active)));
+      still = 0; if (started && !running) draw();
+    });
+    legend.appendChild(btn);
+  });
   let W = 0, H = 0, dpr = 1, balls = [], running = false, started = false;
   const ptr = { x: -9999, y: -9999, px: 0, py: 0, down: false, grab: null };
 
@@ -1263,18 +1292,21 @@
   }
   function init(){
     size();
-    const base = Math.max(34, Math.min(62, W / 15));
+    const base = Math.max(26, Math.min(52, W / 18));
     balls = skills.map((s, i) => {
       const r = base * (0.75 + ((i * 37) % 10) / 22);
-      return { s, r, x: W / 2 + (Math.random() - .5) * W * .8, y: -r - Math.random() * H, vx: (Math.random() - .5) * 4, vy: 0, c: hues[i % hues.length] };
+      return { s: s.s, gi: s.gi, r, x: W / 2 + (Math.random() - .5) * W * .8, y: -r - Math.random() * H, vx: (Math.random() - .5) * 4, vy: 0, c: groups[s.gi].c };
     });
   }
   function step(){
-    const cx = W / 2, cy = H / 2;
+    // one anchor per group: a row on wide screens, 2x2 on narrow ones (ly = where the label sits)
+    anchors = W >= 640
+      ? groups.map((g, i) => ({ x: W * (i * 2 + 1) / 8, y: H * .55, ly: 30 }))
+      : groups.map((g, i) => ({ x: W * (i % 2 ? .75 : .25), y: H * (i < 2 ? .3 : .74), ly: i < 2 ? 22 : H * .5 + 14 }));
     for (const b of balls) {
       if (b === ptr.grab) { b.vx = (ptr.x - b.x) * .35; b.vy = (ptr.y - b.y) * .35; }
       else {
-        b.vx += (cx - b.x) * .0009; b.vy += (cy - b.y) * .0012;
+        const a = anchors[b.gi]; b.vx += (a.x - b.x) * .0012; b.vy += (a.y - b.y) * .0014;
         const dx = b.x - ptr.x, dy = b.y - ptr.y, d = Math.hypot(dx, dy), R = b.r + 70;
         if (d < R && d > 0) { const f = (1 - d / R) * 1.4; b.vx += dx / d * f; b.vy += dy / d * f; }
       }
@@ -1337,10 +1369,19 @@
     step();
     const moving = ptr.grab || balls.some(b => Math.abs(b.vx) + Math.abs(b.vy) > .03) || ptr.x > -9000;
     still = moving ? 0 : still + 1;
+    ctx.font = '500 11px "JetBrains Mono", ui-monospace, monospace';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    groups.forEach((g, gi) => {
+      ctx.globalAlpha = active < 0 || active === gi ? .75 : .2;
+      ctx.fillStyle = `rgb(${g.c})`;
+      ctx.fillText(g.name.toUpperCase(), anchors[gi].x, anchors[gi].ly, W / (W >= 640 ? 4 : 2) - 12);
+    });
     if (still < 2) draw();               // skip redraws once everything has settled
+      ctx.globalAlpha = active < 0 || active === b.gi ? 1 : .18;
     requestAnimationFrame(frame);
   }
   function local(e){ const r = canvas.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    ctx.globalAlpha = 1;
   canvas.addEventListener('pointermove', e => { [ptr.x, ptr.y] = local(e); });
   canvas.addEventListener('pointerleave', () => { ptr.x = ptr.y = -9999; ptr.grab = null; });
   canvas.addEventListener('pointerdown', e => {
