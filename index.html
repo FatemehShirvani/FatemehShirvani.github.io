@@ -210,7 +210,7 @@
     margin:28px 0 0; display:flex; justify-content:center; align-items:baseline; gap:12px; flex-wrap:wrap;
     font-family:var(--display); font-size:clamp(20px, 2.4vw, 28px); font-weight:500; color:var(--muted);
   }
-  .roles .swap{position:relative; display:inline-grid; color:var(--text); min-width:12ch;}
+  .roles .swap{position:relative; display:inline-grid; color:var(--text); text-align:center;}
   .roles .swap span{
     grid-area:1/1; opacity:0; transform:translateY(60%);
     transition:opacity .6s var(--ease), transform .7s var(--ease);
@@ -420,26 +420,34 @@
   @media (max-width:520px){ .stats{grid-template-columns:1fr 1fr;} .stat:last-child{grid-column:1 / -1;} }
 
   /* ---------- what I do ---------- */
-  .services{display:grid; grid-template-columns:repeat(2, 1fr); gap:18px;}
-  @media (max-width:760px){ .services{grid-template-columns:1fr;} }
-  .service{padding:34px 32px 30px; overflow:hidden; transition:transform .6s var(--ease);}
-  .service .corner{position:absolute; width:16px; height:16px; border-color:rgba(255,255,255,.35); border-style:solid; border-width:0; transition:all .5s var(--ease);}
-  .service .corner.tl{top:14px; left:14px; border-top-width:1px; border-left-width:1px;}
-  .service .corner.tr{top:14px; right:14px; border-top-width:1px; border-right-width:1px;}
-  .service .corner.bl{bottom:14px; left:14px; border-bottom-width:1px; border-left-width:1px;}
-  .service .corner.br{bottom:14px; right:14px; border-bottom-width:1px; border-right-width:1px;}
-  .service:hover .corner{border-color:var(--teal); width:26px; height:26px;}
-  .service .num{font-family:var(--mono); font-size:12px; color:var(--faint); letter-spacing:.1em;}
+  .services{display:grid; grid-template-columns:repeat(4, 1fr); gap:14px;}
+  @media (max-width:1000px){ .services{grid-template-columns:repeat(2, 1fr);} }
+  @media (max-width:560px){ .services{grid-template-columns:1fr;} }
+  .service{padding:20px 20px 18px; overflow:hidden; text-align:left; cursor:pointer; color:inherit; font:inherit;
+           display:flex; flex-direction:column; transition:transform .6s var(--ease), border-color .4s;}
+  .service .corner{position:absolute; width:12px; height:12px; border-color:rgba(255,255,255,.35); border-style:solid; border-width:0; transition:all .5s var(--ease);}
+  .service .corner.tl{top:10px; left:10px; border-top-width:1px; border-left-width:1px;}
+  .service .corner.tr{top:10px; right:10px; border-top-width:1px; border-right-width:1px;}
+  .service .corner.bl{bottom:10px; left:10px; border-bottom-width:1px; border-left-width:1px;}
+  .service .corner.br{bottom:10px; right:10px; border-bottom-width:1px; border-right-width:1px;}
+  .service:hover .corner, .service[aria-pressed="true"] .corner{border-color:var(--teal); width:20px; height:20px;}
+  .service[aria-pressed="true"]{border-color:rgba(94,242,214,.65);}
+  .service:focus-visible{outline:2px solid var(--teal); outline-offset:3px;}
+  .service .top{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  .service .num{font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.08em;}
+  .service[aria-pressed="true"] .num{color:var(--teal);}
   .service .icon{
-    width:52px; height:52px; border-radius:16px; display:grid; place-items:center; margin:18px 0 22px;
+    width:40px; height:40px; border-radius:12px; display:grid; place-items:center; margin:14px 0 14px;
     background:linear-gradient(135deg, rgba(94,242,214,.18), rgba(167,139,250,.18));
     border:1px solid var(--glass-border-hi);
     transition:transform .6s var(--ease);
   }
   .service:hover .icon{transform:rotate(-8deg) scale(1.08);}
-  .service .icon svg{width:24px; height:24px; color:var(--teal);}
-  .service h3{font-family:var(--display); font-size:26px; font-weight:600; letter-spacing:-.02em; margin:0 0 10px;}
-  .service p{color:var(--muted); margin:0 0 20px; font-size:15px;}
+  .service .icon svg{width:20px; height:20px; color:var(--teal);}
+  .service h3{font-family:var(--display); font-size:19px; font-weight:600; letter-spacing:-.02em; margin:0 0 6px;}
+  .service p{color:var(--muted); margin:0 0 14px; font-size:13.5px; line-height:1.45;}
+  .service .minitags{margin-top:auto;}
+  .service .minitags span{font-size:10.5px; padding:4px 8px;}
   .minitags{display:flex; flex-wrap:wrap; gap:7px;}
   .minitags span{
     font-family:var(--mono); font-size:11px; letter-spacing:.03em; color:#cfe9e4;
@@ -448,25 +456,20 @@
   }
 
   /* ---------- work ---------- */
-  .works{display:grid; grid-template-columns:repeat(12, 1fr); gap:22px;}
-  .work{grid-column:span 6; display:flex; flex-direction:column; overflow:hidden; text-align:left; padding:0;
+  .works{display:grid; grid-template-columns:1fr; gap:18px;}
+  .work{display:flex; flex-direction:row; align-items:stretch; overflow:hidden; text-align:left; padding:0;
         transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));
         transition:transform .5s var(--ease), border-color .4s; will-change:transform;}
-  .work.wide{grid-column:span 12;}
-  .work.wide{flex-direction:row;}
-  .work.wide .media{flex:1.3; aspect-ratio:auto; min-height:360px;}
-  .work.wide .body{flex:1; justify-content:center;}
-  @media (max-width:900px){
-    .work, .work.wide{grid-column:span 12;}
-    .work.wide{flex-direction:column;}
-    .work.wide .media{min-height:0; aspect-ratio:16/10;}
-  }
+  .work.wide{border-color:rgba(94,242,214,.3);}
+  .work[hidden]{display:none;}
   .work .media{
-    position:relative; aspect-ratio:16/10; overflow:hidden; margin:8px 8px 0; border-radius:16px;
-    background:#070a0f;
+    position:relative; flex:0 0 clamp(260px, 30%, 340px); aspect-ratio:16/10; align-self:flex-start; overflow:hidden;
+    margin:10px; border-radius:14px; background:#070a0f;
   }
-  .work.wide .media{margin:8px 0 8px 8px;}
-  @media (max-width:900px){ .work.wide .media{margin:8px 8px 0;} }
+  @media (max-width:760px){
+    .work{flex-direction:column;}
+    .work .media{flex:none; align-self:auto; width:auto;}
+  }
   .work .media img, .work .media video{width:100%; height:100%; object-fit:cover; display:block; transition:transform 1.2s var(--ease);}
   .work .media.fit{background:#f4f4f1;}
   .work .media.fit img{object-fit:contain; padding:14px;}
@@ -479,19 +482,24 @@
   }
   .work .media.fit::after{background:none;}
   .work .open{
-    position:absolute; right:14px; top:14px; z-index:2;
+    position:absolute; cursor:pointer; padding:0; color:inherit; right:14px; top:14px; z-index:2;
     width:44px; height:44px; border-radius:50%; display:grid; place-items:center;
     background:rgba(10,14,20,.75); border:1px solid var(--glass-border-hi);
     transform:scale(.6) rotate(-45deg); opacity:0;
     transition:transform .5s var(--ease), opacity .4s;
   }
-  .work:hover .open{transform:none; opacity:1;}
-  .work .body{padding:24px 26px 26px; display:flex; flex-direction:column; gap:10px; flex:1;}
+  .work:hover .open, .work .open:focus-visible{transform:none; opacity:1;}
+  .work .body{padding:20px 24px 22px 14px; display:flex; flex-direction:column; gap:10px; flex:1; min-width:0;}
+  @media (max-width:760px){ .work .body{padding:6px 18px 20px;} }
+  .work .links{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-top:6px;}
+  .work .btn{padding:9px 16px; font-size:11.5px; gap:8px;}
+  .work .btn svg{width:14px; height:14px; flex:none;}
+  .work .note{font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:var(--faint);}
   .meta{display:flex; justify-content:space-between; font-family:var(--mono); font-size:11.5px; letter-spacing:.08em; color:var(--muted); text-transform:uppercase;}
   .meta .idx{color:var(--teal);}
-  .work h3{font-family:var(--display); font-size:24px; line-height:1.15; font-weight:600; letter-spacing:-.02em; margin:0;}
+  .work h3{font-family:var(--display); font-size:22px; line-height:1.15; font-weight:600; letter-spacing:-.02em; margin:0;}
   .work p.short{color:var(--muted); font-size:14.5px; margin:0;}
-  .work .minitags{margin-top:auto; padding-top:8px;}
+  .work .minitags{padding-top:4px;}
 
   /* ---------- project dialog ---------- */
   dialog.sheet{
@@ -700,42 +708,42 @@
     <div class="wrap">
       <div data-reveal>
         <p class="eyebrow">What I do</p>
-        <h2 class="title">Four things I <em>love</em> building.</h2>
-        <p class="section-sub">From GPU shaders to tracked ski poles — a toolkit spanning graphics, physics, interaction and data.</p>
+        <h2 class="title">What I <em>work on.</em></h2>
+        <p class="section-sub">Pick an area to filter the projects below.</p>
       </div>
       <div class="services">
-        <article class="service glass spot" data-reveal style="--d:0s">
+        <button type="button" class="service glass spot" data-cat="graphics" aria-pressed="false" data-reveal style="--d:0s">
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-          <span class="num">01</span>
+          <span class="top"><span class="num">01</span><span class="num" data-n></span></span>
           <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg></div>
           <h3>Real-Time Rendering</h3>
-          <p>Shadow filtering, foliage, and novel-view synthesis — renderers that stay fast and stable under hard cases.</p>
+          <p>Shadows, foliage and novel-view synthesis that stay fast.</p>
           <div class="minitags"><span>WebGPU</span><span>GLSL / WGSL</span><span>OpenGL</span><span>3DGS</span></div>
-        </article>
-        <article class="service glass spot" data-reveal style="--d:.1s">
+        </button>
+        <button type="button" class="service glass spot" data-cat="sim" aria-pressed="false" data-reveal style="--d:.1s">
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-          <span class="num">02</span>
+          <span class="top"><span class="num">02</span><span class="num" data-n></span></span>
           <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 17c3-6 6 2 9-4s6 2 9-4"/><circle cx="6" cy="6" r="1.5"/><circle cx="17" cy="19" r="1.5"/></svg></div>
           <h3>Simulation &amp; Geometry</h3>
-          <p>Rigid bodies, SPH fluids, procedural plants and subdivision surfaces, built from first principles in C++.</p>
+          <p>Rigid bodies, SPH fluids, plants and subdivision in C++.</p>
           <div class="minitags"><span>C++</span><span>SPH</span><span>Rigid Body</span><span>L-Systems</span></div>
-        </article>
-        <article class="service glass spot" data-reveal style="--d:.2s">
+        </button>
+        <button type="button" class="service glass spot" data-cat="xr" aria-pressed="false" data-reveal style="--d:.2s">
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-          <span class="num">03</span>
+          <span class="top"><span class="num">03</span><span class="num" data-n></span></span>
           <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2h-4l-2-2.5h-2L9 17H5a2 2 0 0 1-2-2V8Z"/><circle cx="8" cy="11.5" r="1.6"/><circle cx="16" cy="11.5" r="1.6"/></svg></div>
           <h3>Interaction &amp; XR</h3>
-          <p>Embodied VR locomotion and playful direct-manipulation interfaces, evaluated with real tasks.</p>
+          <p>Embodied VR locomotion and playful direct manipulation.</p>
           <div class="minitags"><span>Unity</span><span>C#</span><span>OpenXR</span><span>Meta Quest</span></div>
-        </article>
-        <article class="service glass spot" data-reveal style="--d:.3s">
+        </button>
+        <button type="button" class="service glass spot" data-cat="ml" aria-pressed="false" data-reveal style="--d:.3s">
           <i class="corner tl"></i><i class="corner tr"></i><i class="corner bl"></i><i class="corner br"></i>
-          <span class="num">04</span>
+          <span class="top"><span class="num">04</span><span class="num" data-n></span></span>
           <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="5" cy="6" r="2"/><circle cx="5" cy="18" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="19" cy="18" r="2"/><path d="m7 7 3.4 3.6M7 17l3.4-3.6M13.6 10.6 17 7M13.6 13.4 17 17"/></svg></div>
           <h3>Machine Learning</h3>
-          <p>From fine-tuned language models to motion-signal features — careful pipelines, honest evaluation.</p>
+          <p>Fine-tuned language models and motion-signal features.</p>
           <div class="minitags"><span>PyTorch</span><span>scikit-learn</span><span>XGBoost</span><span>LoRA</span></div>
-        </article>
+        </button>
       </div>
     </div>
   </section>
@@ -748,7 +756,7 @@
           <p class="eyebrow">Selected work</p>
           <h2 class="title">My <em>work.</em></h2>
         </div>
-        <span class="count">10 PROJECTS · 2024 — 2026</span>
+        <span class="count" id="count" aria-live="polite">10 PROJECTS · 2024 — 2026</span>
       </div>
       <div class="works" id="works"></div>
     </div>
@@ -899,51 +907,51 @@
 
   /* ---------- projects ---------- */
   const projects = [
-    { title:'3D Gaussian Splatting for Immersive VR', date:'Jun–Aug 2026', img:'assets/3dgs-vr/essilorluxottica-logo.png', kind:'logo', alt:'EssilorLuxottica', wide:true,
+    { id:'3dgs-vr', cat:['graphics','xr'], title:'3D Gaussian Splatting for Immersive VR', date:'Jun–Aug 2026', img:'assets/3dgs-vr/essilorluxottica-logo.png', kind:'logo', alt:'EssilorLuxottica', wide:true,
       short:'R&D internship at EssilorLuxottica: a real refraction room rebuilt as a room-scale VR scene.',
       desc:'An R&D internship project at EssilorLuxottica focused on recreating an existing physical indoor refraction room as an immersive 3D scene for room-scale VR. I developed an end-to-end workflow spanning photographic capture and preprocessing, Structure-from-Motion calibration with COLMAP, 3D Gaussian Splatting training, and held-out novel-view evaluation using image-quality and perceptual metrics. The reconstructed scene was integrated into Unity with VRSplat and OpenXR to evaluate stereoscopic rendering, six-degree-of-freedom navigation, viewpoint consistency, and runtime performance. The study also identified reconstruction limitations around low-texture surfaces, reflections, thin structures, and disocclusions.',
       tags:['3DGS','VRSplat','Unity','COLMAP','OpenXR'], links:[] },
-    { title:'Variance Soft Shadow Mapping', date:'Mar–Apr 2026', img:'assets/soft-shadows/soft-shadow-loop-card.gif', alt:'Variance soft-shadow methods on a rotating plant scene',
+    { id:'vssm', cat:['graphics'], title:'Variance Soft Shadow Mapping', date:'Mar–Apr 2026', img:'assets/soft-shadows/soft-shadow-loop-card.gif', alt:'Variance soft-shadow methods on a rotating plant scene',
       short:'A WebGPU renderer comparing PCF, PCSS, VSM, SAVSM and a hybrid VSSM on thin foliage.',
       desc:'A real-time WebGPU renderer for studying soft-shadow filtering in difficult cases such as thin foliage and contact regions. The project compares percentage-closer filtering (PCF), percentage-closer soft shadows (PCSS), variance shadow maps (VSM), summed-area variance shadow maps (SAVSM), and Variance Soft Shadow Mapping (VSSM) variants. To make VSSM more stable in practice, I added a hybrid mode that combines adaptive subdivision with exact PCF fallback, reducing light leaking and unstable contact shadows.',
       tags:['WebGPU','WGSL','Real-Time Rendering','Shadow Mapping'],
       links:[['Live demo','assets/soft-shadows/demo.html'],['Code','https://github.com/FatemehShirvani/VarianceSoftShadowMapping']] },
-    { title:'Plant Growth Modeling', date:'Feb 2026', img:'assets/plant-growth/plant-growth-loop.gif', alt:'Procedural tree progressing through seasonal changes',
+    { id:'plant-growth', cat:['graphics','sim'], title:'Plant Growth Modeling', date:'Feb 2026', img:'assets/plant-growth/plant-growth-loop.gif', alt:'Procedural tree progressing through seasonal changes',
       short:'Procedural tree growth, seasons and wind in real-time C++/OpenGL.',
       desc:'A real-time C++/OpenGL system for procedural tree growth, seasonal behavior, and wind animation. The project combines stochastic L-system branching, staged leaf growth and detachment, alpha-tested foliage shadows, and filtered branch/leaf motion so the tree can move through growth, fall, and winter states without visible popping or unstable leaf transitions.',
       tags:['C++','OpenGL','Procedural Modeling','Real-Time Simulation'],
       links:[['Code','https://github.com/FatemehShirvani/PlantGrowthModeling']] },
-    { title:'Smoothed Particle Hydrodynamics', date:'Feb 2026', img:'assets/fluid-simulation/fluid-sph-loop.gif', alt:'Particles flowing around obstacles in a two-dimensional SPH fluid simulation',
+    { id:'sph', cat:['sim'], title:'Smoothed Particle Hydrodynamics', date:'Feb 2026', img:'assets/fluid-simulation/fluid-sph-loop.gif', alt:'Particles flowing around obstacles in a two-dimensional SPH fluid simulation',
       short:'A 2D SPH fluid solver for incompressible flow around moving obstacles.',
       desc:'A two-dimensional Smoothed Particle Hydrodynamics simulator for incompressible flow around static and moving obstacles. It combines cubic-spline kernels, uniform-grid neighbor search, density, pressure, and viscosity forces, adaptive CFL-style time stepping, and particle-boundary collision handling, with grid and velocity-field diagnostics for inspecting the simulation.',
       tags:['C++','SPH','Fluid Simulation','Numerical Methods'],
       links:[['Code','https://github.com/FatemehShirvani/FluidSPHSimulation']] },
-    { title:'Ski Locomotion in Virtual Reality', date:'Feb 2026', img:'assets/ski-locomotion/ski-locomotion-loop.gif', alt:'First-person virtual-reality skiing with tracked poles and checkpoint targets',
+    { id:'ski-vr', cat:['xr'], title:'Ski Locomotion in Virtual Reality', date:'Feb 2026', img:'assets/ski-locomotion/ski-locomotion-loop.gif', alt:'First-person virtual-reality skiing with tracked poles and checkpoint targets',
       short:'Embodied Meta Quest locomotion that turns ski-pole strokes into motion.',
       desc:'An embodied locomotion technique for Meta Quest that turns tracked ski-pole strokes into forward impulses. The Unity implementation combines pole-tip ground contact and controller motion with slope-aware acceleration, steering, braking, friction, and ramp jumps, then evaluates the interaction through timed checkpoint and selection tasks with in-headset performance logging.',
       tags:['Unity','C#','Virtual Reality','Interaction Design'],
       links:[['Code','https://github.com/FatemehShirvani/HCI-for-Mixed-Reality']] },
-    { title:'Loop Subdivision Surfaces', date:'Jan 2026', img:'assets/subdivision-surfaces/subdivision-loop.gif', alt:'Loop subdivision smoothing a triangular monkey mesh',
+    { id:'loop-subdivision', cat:['graphics','sim'], title:'Loop Subdivision Surfaces', date:'Jan 2026', img:'assets/subdivision-surfaces/subdivision-loop.gif', alt:'Loop subdivision smoothing a triangular monkey mesh',
       short:'Progressive mesh smoothing with Loop subdivision, wireframe inspection and undo.',
       desc:'A C++/OpenGL implementation of Loop subdivision for progressively smoothing triangular meshes. The algorithm builds vertex and edge adjacency, applies valence-dependent masks to original vertices, creates shared odd vertices with interior and boundary rules, and replaces every triangle with four refined faces. Interactive wireframe inspection, bounded subdivision depth, and undo make the topology and convergence behavior easier to examine.',
       tags:['C++','OpenGL','Geometry Processing','Mesh Topology'],
       links:[['Code','https://github.com/FatemehShirvani/LoopSubdivisionSurfaces']] },
-    { title:'Multi-Body Rigid Body Simulation', date:'Jan 2026', img:'assets/rigid-body/rigid-body-loop.gif', alt:'Boxes and cylinders colliding in a rigid-body simulation',
+    { id:'rigid-body', cat:['sim'], title:'Multi-Body Rigid Body Simulation', date:'Jan 2026', img:'assets/rigid-body/rigid-body-loop.gif', alt:'Boxes and cylinders colliding in a rigid-body simulation',
       short:'Boxes and cylinders under impulses, friction, restitution and sleep states.',
       desc:'A C++ rigid-body simulator for mixed boxes and cylinders under gravity, randomized impulses, and contact constraints. The system integrates linear and angular momentum with body-specific inertia tensors, uses normalized quaternions for stable rotation, and resolves wall and inter-body contacts through impulses, restitution, Coulomb friction, positional correction, damping, and sleep states.',
       tags:['C++','Rigid Body Dynamics','Collision Response','OpenGL'],
       links:[['Code','https://github.com/FatemehShirvani/RigidBodySimulation']] },
-    { title:'Interactive Wardrobe Customization', date:'Sep–Oct 2025', img:'assets/purr-and-pattern/overview.png', alt:'Pixel-art character and interactive wardrobe customization interface',
+    { id:'wardrobe', cat:['xr'], title:'Interactive Wardrobe Customization', date:'Sep–Oct 2025', img:'assets/purr-and-pattern/overview.png', alt:'Pixel-art character and interactive wardrobe customization interface',
       short:'A playful 2D fashion game exploring direct-manipulation techniques.',
       desc:'An interactive 2D fashion game developed in Unity and C# to explore varied direct-manipulation techniques through a playful wardrobe. Players drag axis-constrained doors and drawers, rearrange hangers, snap garments onto customizable characters, create colors and patterns with matching-color suggestions, and save, import, or export their designs.',
       tags:['Unity','C#','Interaction Design','2D UI'],
       links:[['Code','https://github.com/FatemehShirvani/Interactive-Wardrobe-Customization']] },
-    { title:'Influencer Detection on French Twitter', date:'Dec 2025', img:'assets/twitter-classification/model-results.png', kind:'fit', alt:'Test accuracy comparison across text embeddings, metadata, and hybrid feature sets',
+    { id:'twitter', cat:['ml'], title:'Influencer Detection on French Twitter', date:'Dec 2025', img:'assets/twitter-classification/model-results.png', kind:'fit', alt:'Test accuracy comparison across text embeddings, metadata, and hybrid feature sets',
       short:'LoRA-tuned CamemBERT + behavioral features + XGBoost — 85.7% accuracy.',
       desc:'Classified users as influencers or observers from French tweets and profile data. The final pipeline combines LoRA-fine-tuned CamemBERT representations, behavioral features, user-level aggregation, and regularized XGBoost, reaching 85.7% final accuracy.',
       tags:['CamemBERT','LoRA','XGBoost','NLP'],
       links:[['Code','https://github.com/FatemehShirvani/French-Twitter-Influencer-Classification']] },
-    { title:'Motor Learning from Foot-Drawn Shapes', date:'Jun–Sep 2024', img:'assets/motor-learning/final-results-table.png', kind:'fit', alt:'Final classification results table for each foot-drawn shape and the pooled dataset',
+    { id:'motor-learning', cat:['ml'], title:'Motor Learning from Foot-Drawn Shapes', date:'Jun–Sep 2024', img:'assets/motor-learning/final-results-table.png', kind:'fit', alt:'Final classification results table for each foot-drawn shape and the pooled dataset',
       short:'Kinematic features and LOSO evaluation of practice effects — up to 96% accuracy.',
       desc:'Investigated how practice changes movement quality in a seven-session foot-drawing task. I corrected sampling and quantization artifacts, extracted structural and kinematic features such as SSIM, duration, velocity, curvature, acceleration, jerk, and smoothness, and compared clustering and classification models. In leave-one-subject-out evaluation, shape-specific accuracy reached 96%, the pooled Random Forest reached 79%, and the best early-versus-late session grouping reached 81% on unseen participants.',
       tags:['Python','MATLAB','Motor Learning','Signal Processing','Machine Learning'],
@@ -958,23 +966,52 @@
     return `<video src="${base}.mp4" poster="${base}-poster.jpg" muted loop playsinline ${autoplay ? 'autoplay preload="auto"' : 'preload="none"'} aria-label="${esc(p.alt)}"></video>`;
   };
   const works = document.getElementById('works');
+  const GH = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.18 1.83 1.18 3.09 0 4.42-2.69 5.39-5.25 5.68.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>';
+  const linkBtn = ([label, href], j) => {
+    const gh = label === 'Code';
+    return `<a class="btn${j === 0 ? ' primary' : ''}" href="${href}"${href.startsWith('http') ? ' target="_blank" rel="noopener"' : ''}>${gh ? GH + 'GitHub' : label + ' <span class="arrow">↗</span>'}</a>`;
+  };
   works.innerHTML = projects.map((p, i) => `
-    <button class="work glass spot${p.wide ? ' wide' : ''}" type="button" data-i="${i}" data-reveal style="--d:${(i % 2) * 0.08}s" aria-label="Open project: ${esc(p.title)}">
+    <article class="work glass spot${p.wide ? ' wide' : ''}" id="p-${p.id}" data-i="${i}" data-cat="${p.cat.join(' ')}" data-reveal style="--d:${(i % 2) * 0.08}s">
       <div class="media${p.kind ? ' ' + p.kind : ''}">
         ${media(p)}
-        <span class="open" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+        <button class="open" type="button" data-details aria-label="Details: ${esc(p.title)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8"/></svg></button>
       </div>
       <div class="body">
         <div class="meta"><span class="idx">${String(i + 1).padStart(2, '0')}</span><span>${p.date}</span></div>
         <h3>${esc(p.title)}</h3>
         <p class="short">${esc(p.short)}</p>
         <div class="minitags">${p.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>
+        <div class="links">
+          ${p.links.map(linkBtn).join('')}
+          <button class="btn" type="button" data-details aria-label="Details: ${esc(p.title)}">Details</button>
+          ${p.links.length ? '' : '<span class="note">Industry project — code not public</span>'}
+        </div>
       </div>
-    </button>`).join('');
+    </article>`).join('');
+
+  /* ---------- area filter ---------- */
+  const cards = [...works.querySelectorAll('.work')];
+  const areas = [...document.querySelectorAll('.service[data-cat]')];
+  const countEl = document.getElementById('count');
+  areas.forEach(a => {
+    const n = projects.filter(p => p.cat.includes(a.dataset.cat)).length;
+    a.querySelector('[data-n]').textContent = n + (n === 1 ? ' project' : ' projects');
+    a.addEventListener('click', () => {
+      const on = a.getAttribute('aria-pressed') === 'true';
+      areas.forEach(x => x.setAttribute('aria-pressed', 'false'));
+      if (!on) a.setAttribute('aria-pressed', 'true');
+      const cat = on ? null : a.dataset.cat;
+      let shown = 0;
+      cards.forEach(c => { const v = !cat || projects[+c.dataset.i].cat.includes(cat); c.hidden = !v; if (v) shown++; });
+      countEl.textContent = cat ? shown + ' OF ' + projects.length + ' PROJECTS' : projects.length + ' PROJECTS · 2024 — 2026';
+    });
+  });
 
   const sheet = document.getElementById('sheet');
   const sMedia = sheet.querySelector('.s-media');
   works.addEventListener('click', e => {
+    if (!e.target.closest('[data-details]')) return;
     const card = e.target.closest('.work'); if (!card) return;
     const p = projects[+card.dataset.i];
     sMedia.className = 's-media' + (p.kind ? ' ' + p.kind : '');
